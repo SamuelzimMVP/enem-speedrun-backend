@@ -127,8 +127,9 @@ const CATEGORY_LABELS = {
 };
 
 // ─── POST /api/quiz/start ─────────────────────────────────────────────────────
-router.post('/start', authMiddleware, async (req, res) => {
+router.post('/start', async (req, res) => {
   const { category, count } = req.body;
+  const isGuest = !req.headers.authorization; // Se não tem token, é visitante
 
   if (!VALID_CATEGORIES.includes(category)) {
     return res.status(400).json({ error: `Categoria inválida: ${category}` });
@@ -146,12 +147,23 @@ router.post('/start', authMiddleware, async (req, res) => {
 
     // Armazena gabarito na sessão (não enviado ao frontend)
     sessions.set(sessionId, {
-      userId: req.user.id,
+      userId: isGuest ? 'GUEST' : null, // Marcar como visitante se não houver auth
       category,
       count: questionCount,
       startedAt: Date.now(),
       gabarito: Object.fromEntries(questions.map(q => [q.id, q.gabarito])),
     });
+
+    // Se houver token, tentamos pegar o ID real do usuário para a sessão
+    if (!isGuest) {
+      try {
+        const auth = require('../middleware/authMiddleware');
+        // Hack simples para usar o middleware sem travar a rota se falhar
+        auth(req, res, () => {
+          if (req.user) sessions.get(sessionId).userId = req.user.id;
+        });
+      } catch (e) {}
+    }
 
     const sanitizedQuestions = questions.map(({ gabarito, ...q }) => ({
       ...q,
@@ -197,9 +209,11 @@ router.post('/submit', authMiddleware, async (req, res) => {
     return res.status(404).json({ error: 'Sessão não encontrada ou expirada.' });
   }
 
-  if (session.userId !== req.user.id) {
+  if (session.userId !== 'GUEST' && (!req.user || session.userId !== req.user.id)) {
     return res.status(403).json({ error: 'Sessão não pertence a este usuário.' });
   }
+
+  const isGuest = session.userId === 'GUEST';
 
   let correct = 0;
   const details = [];
@@ -214,6 +228,19 @@ router.post('/submit', authMiddleware, async (req, res) => {
   const total = session.count;
 
   try {
+    if (isGuest) {
+      sessions.delete(sessionId);
+      return res.json({
+        correct,
+        total,
+        timeSeconds: Math.round(timeSeconds),
+        percentage: Math.round((correct / total) * 100),
+        position: null,
+        details,
+        isGuest: true
+      });
+    }
+
     const { data: result, error } = await supabase.from('results').insert({
       user_id: req.user.id,
       category: session.category,
