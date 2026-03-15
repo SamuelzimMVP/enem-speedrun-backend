@@ -64,7 +64,14 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Email ou senha incorretos.' });
     }
 
-    // Busca nome do perfil
+    // Garante que o perfil existe (Just-In-Time creation)
+    await supabase.from('profiles').upsert({
+      id: data.user.id,
+      nome: data.user.user_metadata?.nome || 'Usuário',
+      email: data.user.email,
+    });
+
+    // Busca nome do perfil atualizado
     const { data: profile } = await supabase
       .from('profiles')
       .select('nome')

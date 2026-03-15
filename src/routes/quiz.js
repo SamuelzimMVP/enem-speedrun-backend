@@ -231,6 +231,13 @@ router.post('/submit', optionalAuth, async (req, res) => {
       });
     }
 
+    // Garante que o perfil existe antes de salvar o resultado (para aparecer no ranking_view)
+    await supabase.from('profiles').upsert({
+      id: req.user.id,
+      nome: req.user.user_metadata?.nome || 'Usuário',
+      email: req.user.email,
+    });
+
     const { data: result, error } = await supabase.from('results').insert({
       user_id: req.user.id,
       category: session.category,
