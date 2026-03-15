@@ -1,0 +1,186 @@
+{
+  "results": [
+    {
+      "id": "607bae3c-a193-494b-b9ac-a977118ad1cf",
+      "user_id": "44e98165-d6ef-4ebc-8f4d-2f2a7874f2f0",
+      "category": "humanas",
+      "question_count": 30,
+      "correct_answers": 8,
+      "time_seconds": 38,
+      "completed_at": "2026-03-15T00:04:51.867+00:00"
+    },
+    {
+      "id": "1e8bdea1-33f8-45c2-ac09-c4df48a9875a",
+      "user_id": "44e98165-d6ef-4ebc-8f4d-2f2a7874f2f0",
+      "category": "humanas",
+      "question_count": 30,
+      "correct_answers": 7,
+      "time_seconds": 38,
+      "completed_at": "2026-03-15T00:03:38.586+00:00"
+    },
+    {
+      "id": "22d1e3de-6668-4a49-9321-70d3cc8aba11",
+      "user_id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "category": "completa",
+      "question_count": 10,
+      "correct_answers": 3,
+      "time_seconds": 14,
+      "completed_at": "2026-03-15T00:02:22.42+00:00"
+    },
+    {
+      "id": "37150fe7-79b6-4d2b-8c48-c8670cf2f8b1",
+      "user_id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "category": "completa",
+      "question_count": 10,
+      "correct_answers": 1,
+      "time_seconds": 13,
+      "completed_at": "2026-03-14T23:50:25.713+00:00"
+    },
+    {
+      "id": "cf444037-406d-4e74-93a2-5efa8f7c9d23",
+      "user_id": "461e06e4-531d-4fb8-b5a8-eddb3ea7e749",
+      "category": "completa",
+      "question_count": 10,
+      "correct_answers": 0,
+      "time_seconds": 36,
+      "completed_at": "2026-03-14T23:49:53.773+00:00"
+    },
+    {
+      "id": "f352e333-a641-49ae-9f3b-8b943be39562",
+      "user_id": "461e06e4-531d-4fb8-b5a8-eddb3ea7e749",
+      "category": "completa",
+      "question_count": 10,
+      "correct_answers": 2,
+      "time_seconds": 18,
+      "completed_at": "2026-03-14T23:47:58.285+00:00"
+    },
+    {
+      "id": "1ec32a4f-d952-4239-85b7-ae5d9dc1672b",
+      "user_id": "461e06e4-531d-4fb8-b5a8-eddb3ea7e749",
+      "category": "completa",
+      "question_count": 10,
+      "correct_answers": 2,
+      "time_seconds": 20,
+      "completed_at": "2026-03-14T22:15:20.162+00:00"
+    },
+    {
+      "id": "f58ff282-dc51-49c2-8a0b-4e7a01c72ecc",
+      "user_id": "461e06e4-531d-4fb8-b5a8-eddb3ea7e749",
+      "category": "completa",
+      "question_count": 10,
+      "correct_answers": 1,
+      "time_seconds": 22,
+      "completed_at": "2026-03-14T22:13:36.235+00:00"
+    },
+    {
+      "id": "14617b07-dff3-489a-8516-435de9161847",
+      "user_id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "category": "humanas",
+      "question_count": 20,
+      "correct_answers": 5,
+      "time_seconds": 22,
+      "completed_at": "2026-03-14T22:12:03.881+00:00"
+    },
+    {
+      "id": "184d382c-1fd6-4f56-a7c1-50923fd826c3",
+      "user_id": "461e06e4-531d-4fb8-b5a8-eddb3ea7e749",
+      "category": "completa",
+      "question_count": 10,
+      "correct_answers": 2,
+      "time_seconds": 26,
+      "completed_at": "2026-03-14T22:03:41.01+00:00"
+    }
+  ],
+  "ranking": [
+    {
+      "id": "26047639-b86d-4d09-87c9-390332301a39",
+      "user_id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "nome": "Samuel",
+      "category": "completa",
+      "question_count": 10,
+      "correct_answers": 4,
+      "time_seconds": 13,
+      "completed_at": "2026-03-14T02:25:30.934+00:00"
+    },
+    {
+      "id": "ef785c41-13a7-420c-abdc-5a28be080abc",
+      "user_id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "nome": "Samuel",
+      "category": "exatas",
+      "question_count": 10,
+      "correct_answers": 5,
+      "time_seconds": 16,
+      "completed_at": "2026-03-14T14:40:31.325+00:00"
+    },
+    {
+      "id": "4224979b-9efc-476e-a51b-5fbd51ec8c5a",
+      "user_id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "nome": "Samuel",
+      "category": "exatas",
+      "question_count": 20,
+      "correct_answers": 4,
+      "time_seconds": 374,
+      "completed_at": "2026-03-14T16:55:28.26+00:00"
+    },
+    {
+      "id": "b82ec299-d0bf-4286-a35e-65bb82294a75",
+      "user_id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "nome": "Samuel",
+      "category": "humanas",
+      "question_count": 10,
+      "correct_answers": 3,
+      "time_seconds": 15,
+      "completed_at": "2026-03-14T14:49:39.142+00:00"
+    },
+    {
+      "id": "14617b07-dff3-489a-8516-435de9161847",
+      "user_id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "nome": "Samuel",
+      "category": "humanas",
+      "question_count": 20,
+      "correct_answers": 5,
+      "time_seconds": 22,
+      "completed_at": "2026-03-14T22:12:03.881+00:00"
+    },
+    {
+      "id": "f0d1a78f-47c1-47bb-8c0f-80046321e5b5",
+      "user_id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "nome": "Samuel",
+      "category": "ingles",
+      "question_count": 10,
+      "correct_answers": 0,
+      "time_seconds": 19,
+      "completed_at": "2026-03-14T00:03:36.291+00:00"
+    },
+    {
+      "id": "b85e392b-935b-45d3-a1a8-90637af699d1",
+      "user_id": "d42b576b-0904-4b61-bd59-fa2655a13d35",
+      "nome": "eu",
+      "category": "completa",
+      "question_count": 10,
+      "correct_answers": 4,
+      "time_seconds": 15,
+      "completed_at": "2026-03-14T19:09:40.259+00:00"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "b33abff9-b9d9-43bf-83c1-4f9f53754518",
+      "nome": "Samuel",
+      "email": "samuelcaroba0806@gmail.com",
+      "created_at": "2026-03-13T21:58:38.070749+00:00"
+    },
+    {
+      "id": "d42b576b-0904-4b61-bd59-fa2655a13d35",
+      "nome": "eu",
+      "email": "eu@gmail.com",
+      "created_at": "2026-03-14T19:08:46.941621+00:00"
+    },
+    {
+      "id": "6e28da74-8d06-44a8-93b0-70cb37b2505a",
+      "nome": "kkkkkkkkkk",
+      "email": "kkkkkkkkkk@gmail.com",
+      "created_at": "2026-03-14T22:57:35.672783+00:00"
+    }
+  ]
+}

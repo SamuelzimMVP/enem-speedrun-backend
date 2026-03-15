@@ -10,6 +10,12 @@ const rankingRoutes = require('./src/routes/ranking');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Middleware de debug para versão
+app.use((req, res, next) => {
+  res.setHeader('X-Backend-Version', '1.0.5-FIX-AUTH');
+  next();
+});
+
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 // Permite apenas seu frontend e localhost
 const allowedOrigins = [
