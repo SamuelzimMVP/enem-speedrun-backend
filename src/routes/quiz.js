@@ -127,9 +127,22 @@ const CATEGORY_LABELS = {
 };
 
 // ─── POST /api/quiz/start ─────────────────────────────────────────────────────
-router.post('/start', optionalAuth, async (req, res) => {
+router.post('/start', async (req, res) => {
+  // Autenticação opcional manual
+  let currentUser = null;
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    if (token && token !== 'null' && token !== 'undefined') {
+      try {
+        const { data: { user } } = await supabase.auth.getUser(token);
+        currentUser = user;
+      } catch (e) {}
+    }
+  }
+
   const { category, count } = req.body;
-  const isGuest = !req.user;
+  const isGuest = !currentUser;
 
   if (!VALID_CATEGORIES.includes(category)) {
     return res.status(400).json({ error: `Categoria inválida: ${category}` });
@@ -147,7 +160,7 @@ router.post('/start', optionalAuth, async (req, res) => {
 
     // Armazena gabarito na sessão (não enviado ao frontend)
     sessions.set(sessionId, {
-      userId: isGuest ? 'GUEST' : req.user.id,
+      userId: isGuest ? 'GUEST' : currentUser.id,
       category,
       count: questionCount,
       startedAt: Date.now(),
@@ -185,7 +198,20 @@ router.get('/start-test', async (req, res) => {
 });
 
 // ─── POST /api/quiz/submit ────────────────────────────────────────────────────
-router.post('/submit', optionalAuth, async (req, res) => {
+router.post('/submit', async (req, res) => {
+  // Autenticação opcional manual para máxima compatibilidade com visitantes
+  let currentUser = null;
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    if (token && token !== 'null' && token !== 'undefined') {
+      try {
+        const { data: { user } } = await supabase.auth.getUser(token);
+        currentUser = user;
+      } catch (e) { /* ignora erro de auth */ }
+    }
+  }
+
   const { sessionId, answers, timeSeconds } = req.body;
 
   if (!sessionId || !answers || timeSeconds === undefined) {
@@ -199,7 +225,7 @@ router.post('/submit', optionalAuth, async (req, res) => {
   }
 
   // Se a sessão era de usuário logado, valida o usuário atual
-  if (session.userId !== 'GUEST' && (!req.user || session.userId !== req.user.id)) {
+  if (session.userId !== 'GUEST' && (!currentUser || session.userId !== currentUser.id)) {
     return res.status(403).json({ error: 'Sessão não pertence a este usuário.' });
   }
 
@@ -233,13 +259,13 @@ router.post('/submit', optionalAuth, async (req, res) => {
 
     // Garante que o perfil existe antes de salvar o resultado (para aparecer no ranking_view)
     await supabase.from('profiles').upsert({
-      id: req.user.id,
-      nome: req.user.user_metadata?.nome || 'Usuário',
-      email: req.user.email,
+      id: currentUser.id,
+      nome: currentUser.user_metadata?.nome || 'Usuário',
+      email: currentUser.email,
     });
 
     const { data: result, error } = await supabase.from('results').insert({
-      user_id: req.user.id,
+      user_id: currentUser.id,
       category: session.category,
       question_count: total,
       correct_answers: correct,
@@ -262,7 +288,7 @@ router.post('/submit', optionalAuth, async (req, res) => {
     sessions.delete(sessionId);
 
     // Verifica conquistas
-    const newAchievements = await checkAndGrantAchievements(req.user.id, {
+    const newAchievements = await checkAndGrantAchievements(currentUser.id, {
       correct, total, timeSeconds: Math.round(timeSeconds), category: session.category,
     });
 
