@@ -29,30 +29,41 @@ function mapDiscipline(apiDiscipline) {
 
 // Normaliza questões
 function normalizeQuestion(q, disciplinaKey) {
+  // Filtro básico de integridade
+  if (!q.alternatives || q.alternatives.length < 4) return null;
+  
   const alternativas = (q.alternatives || []).map((a, i) => ({
     letra: a.letter || String.fromCharCode(65 + i),
     texto: a.text || '',
     imgUrl: a.file || null,
-    isCorrect: a.isCorrect || false,
+    isCorrect: !!a.isCorrect,
   }));
 
-  const gabaritoObj = alternativas.find(a => a.isCorrect === true) || {};
+  const gabaritoObj = alternativas.find(a => a.isCorrect === true);
+  if (!gabaritoObj) return null; // Sem resposta correta = questão inválida
 
-  // Extrai imagens — 'files' é um array de strings com URLs diretas
+  // Enunciado robusto: tenta vários campos da API
+  const enunciado = (q.alternativesIntroduction || q.statement || q.text || '').trim();
+  if (enunciado.length < 10) return null; // Enunciado muito curto/vazio
+
+  // Extrai imagens
   const allImages = (q.files || []).filter(
     f => typeof f === 'string' && f.startsWith('http') && !f.includes('broken-image')
   );
 
+  // ID único: Ano + Numero + Disciplina
+  const stableId = `${q.year || '0'}-${q.index || '0'}-${disciplinaKey}`;
+
   return {
-    id: q.title || String(Math.random()),
+    id: stableId,
     ano: q.year || 0,
     numero: q.index || 0,
     disciplina: disciplinaKey,
-    contexto: q.context || '',
-    enunciado: q.alternativesIntroduction || q.statement || q.text || '',
+    contexto: (q.context || '').trim(),
+    enunciado: enunciado,
     alternativas,
     imagens: allImages,
-    gabarito: gabaritoObj.letra || null,
+    gabarito: gabaritoObj.letra,
   };
 }
 
@@ -105,6 +116,8 @@ async function fetchAllQuestions() {
 
   console.log(`[Preload] Encontradas ${exams.length} provas`);
 
+  const seenIds = new Set();
+
   for (const exam of exams) {
     console.log(`[Preload] Processando ${exam.year}...`);
 
@@ -118,10 +131,13 @@ async function fetchAllQuestions() {
       if (!disciplina) continue;
 
       const normalized = normalizeQuestion(q, disciplina);
-      questionPool[disciplina].push(normalized);
+      if (normalized && !seenIds.has(normalized.id)) {
+        seenIds.add(normalized.id);
+        questionPool[disciplina].push(normalized);
+      }
     }
 
-    console.log(`[Preload] ${exam.year}: ${questions.length} questões processadas`);
+    console.log(`[Preload] ${exam.year}: ${questions.length} questões na API → ${seenIds.size} acumuladas no pool`);
   }
 
   return questionPool;

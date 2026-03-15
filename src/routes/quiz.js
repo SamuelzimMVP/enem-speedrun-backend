@@ -102,13 +102,16 @@ async function checkAndGrantAchievements(userId, context) {
   return newlyUnlocked;
 }
 
-// ─── Sessões em memória (TTL 2 horas) ──────────────────────────────────────
+// ─── Sessões em memória (TTL 5 horas) ──────────────────────────────────────
 const sessions = new Map();
 
 setInterval(() => {
   const now = Date.now();
   for (const [id, session] of sessions.entries()) {
-    if (now - session.startedAt > 2 * 60 * 60 * 1000) sessions.delete(id);
+    if (now - session.startedAt > 5 * 60 * 60 * 1000) {
+      console.log(`[Session] Expulsa por inatividade: ${id} (Iniciada em: ${new Date(session.startedAt).toISOString()})`);
+      sessions.delete(id);
+    }
   }
 }, 5 * 60 * 1000);
 

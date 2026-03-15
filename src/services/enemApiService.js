@@ -5,7 +5,7 @@ const path = require('path');
 const ENEM_API_BASE = 'https://api.enem.dev/v1';
 const QUESTIONS_FILE = path.join(__dirname, '..', '..', 'data', 'questions.json');
 
-// ─── Cache em memória ─────────────────────────────────────────────────────────
+// ─── Cache em memória (com limpeza de duplicados) ──────────────────────────────
 const questionPool = {
   linguagens: [],
   humanas: [],
@@ -13,7 +13,7 @@ const questionPool = {
   matematica: [],
 };
 let cacheLoadedAt = null;
-const CACHE_TTL = 2 * 60 * 60 * 1000; // 2 horas
+const CACHE_TTL = 3 * 24 * 60 * 60 * 1000; // 3 dias (mais persistente)
 
 // ─── Carrega questões do arquivo local ────────────────────────────────────────
 function loadFromFile() {
@@ -57,30 +57,41 @@ function mapDiscipline(apiDiscipline) {
 
 // ─── Normaliza questões ──────────────────────────────────────────────────────
 function normalizeQuestion(q, disciplinaKey) {
+  // Filtro básico de integridade
+  if (!q.alternatives || q.alternatives.length < 4) return null;
+  
   const alternativas = (q.alternatives || []).map((a, i) => ({
     letra: a.letter || String.fromCharCode(65 + i),
     texto: a.text || '',
     imgUrl: a.file || null,
-    isCorrect: a.isCorrect || false,
+    isCorrect: !!a.isCorrect,
   }));
 
-  const gabaritoObj = alternativas.find(a => a.isCorrect === true) || {};
+  const gabaritoObj = alternativas.find(a => a.isCorrect === true);
+  if (!gabaritoObj) return null; // Sem resposta correta = questão inválida
 
-  // Extrai imagens — 'files' é um array de strings com URLs diretas
+  // Enunciado pode estar em vários campos dependendo da versão da API
+  const enunciado = (q.alternativesIntroduction || q.statement || q.text || '').trim();
+  if (enunciado.length < 10) return null; // Enunciado muito curto/vazio
+
+  // Extrai imagens
   const allImages = (q.files || []).filter(
     f => typeof f === 'string' && f.startsWith('http') && !f.includes('broken-image')
   );
 
+  // Gera um ID único e estável: Ano + Numero + Disciplina
+  const stableId = `${q.year || '0'}-${q.index || '0'}-${disciplinaKey}`;
+
   return {
-    id: q.title || String(Math.random()),
+    id: stableId,
     ano: q.year || 0,
     numero: q.index || 0,
     disciplina: disciplinaKey,
-    contexto: q.context || '',
-    enunciado: q.alternativesIntroduction || q.statement || q.text || '',
+    contexto: (q.context || '').trim(),
+    enunciado: enunciado,
     alternativas,
     imagens: allImages,
-    gabarito: gabaritoObj.letra || null,
+    gabarito: gabaritoObj.letra,
   };
 }
 
@@ -137,52 +148,57 @@ async function populateCache() {
   console.log('[Cache] Populando cache de questões...');
   try {
     const exams = await fetch(`${ENEM_API_BASE}/exams`).then(r => r.json());
+    if (!Array.isArray(exams)) throw new Error('Falha ao obter lista de exames');
+
+    const seenIds = new Set();
+    const newPool = { linguagens: [], humanas: [], natureza: [], matematica: [] };
 
     for (const exam of exams) {
+      console.log(`[Cache] Processando ano ${exam.year}...`);
       let questions = [];
       try {
         questions = await fetchQuestionsByYear(exam.year, 50);
       } catch (err) {
-        console.warn(`[Cache] Ignorando ano ${exam.year} - ${err.message}`);
+        console.warn(`[Cache] Erro ao buscar ano ${exam.year}: ${err.message}`);
         continue;
       }
 
       for (const q of questions) {
         const rawDiscipline = q.discipline || q.subject;
-        if (!rawDiscipline) {
-          console.log(`[Cache] Ignorada questão sem disciplina: ${q.id}`);
-          continue;
-        }
+        if (!rawDiscipline) continue;
 
         const disciplina = mapDiscipline(rawDiscipline);
-        if (!disciplina) {
-          console.log(`[Cache] Ignorada questão com disciplina desconhecida: ${q.id}, '${rawDiscipline}'`);
-          continue;
-        }
+        if (!disciplina) continue;
 
-        questionPool[disciplina].push(normalizeQuestion(q, disciplina));
+        const normalized = normalizeQuestion(q, disciplina);
+        if (normalized && !seenIds.has(normalized.id)) {
+          seenIds.add(normalized.id);
+          newPool[disciplina].push(normalized);
+        }
       }
 
-      await new Promise(r => setTimeout(r, 500)); // espera entre anos para evitar bloqueio
+      await new Promise(r => setTimeout(r, 500));
     }
 
+    // Aplicação atômica do novo pool
+    Object.assign(questionPool, newPool);
     cacheLoadedAt = Date.now();
+
     console.log('[Cache] Cache populado com sucesso!');
     for (const key of Object.keys(questionPool)) {
       console.log(`[Cache] ${key}: ${questionPool[key].length} questões`);
     }
   } catch (err) {
-    console.error('[Cache] Erro ao popular cache:', err.message);
+    console.error('[Cache] Erro fatal ao popular cache:', err.message);
   }
 }
 
 // ─── Retorna questões aleatórias para categoria ─────────────────────────────
 async function getQuestions(category, count) {
-  // Tenta carregar do arquivo local primeiro
+  // Tenta carregar do arquivo local primeiro se o cache estiver zerado
   const totalCache = Object.values(questionPool).reduce((sum, arr) => sum + arr.length, 0);
   if (totalCache === 0) {
     if (!loadFromFile()) {
-      // Se não conseguiu carregar do arquivo, tenta da API
       console.log('[Cache] Arquivo não encontrado, buscando da API...');
       await populateCache();
     }
