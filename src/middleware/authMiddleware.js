@@ -24,4 +24,29 @@ async function authMiddleware(req, res, next) {
   }
 }
 
-module.exports = authMiddleware;
+async function optionalAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    req.user = null;
+    return next();
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      req.user = null;
+    } else {
+      req.user = user;
+    }
+    next();
+  } catch (err) {
+    req.user = null;
+    next();
+  }
+}
+
+module.exports = { authMiddleware, optionalAuth };
