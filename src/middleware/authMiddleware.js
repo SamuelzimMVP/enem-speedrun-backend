@@ -2,6 +2,7 @@ const supabase = require('../services/supabaseClient');
 
 async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
+  console.log(`[StrictAuth] URL: ${req.url} | Header: ${authHeader ? 'Presente' : 'Ausente'}`);
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Token de autenticação ausente.' });
@@ -25,28 +26,26 @@ async function authMiddleware(req, res, next) {
 }
 
 async function optionalAuth(req, res, next) {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    req.user = null;
-    return next();
-  }
-
-  const token = authHeader.split(' ')[1];
-
+  req.user = null;
+  
   try {
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    
-    if (error || !user) {
-      req.user = null;
-    } else {
-      req.user = user;
+    const authHeader = req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      
+      if (token && token !== 'null' && token !== 'undefined' && token !== '') {
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        if (!error && user) {
+          req.user = user;
+        }
+      }
     }
-    next();
   } catch (err) {
-    req.user = null;
-    next();
+    console.error('[OptionalAuth] Erro silencioso:', err.message);
   }
+  
+  next();
 }
 
 module.exports = { authMiddleware, optionalAuth };
