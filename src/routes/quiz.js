@@ -162,7 +162,7 @@ router.post('/start', async (req, res) => {
 
     const sessionId = uuidv4();
 
-    // Armazena gabarito na sessão (não enviado ao frontend)
+    // Armazena gabarito na sessão (servidor)
     sessions.set(sessionId, {
       userId: isGuest ? 'GUEST' : currentUser.id,
       category,
@@ -176,12 +176,18 @@ router.post('/start', async (req, res) => {
       alternativas: (q.alternativas || []).map(({ isCorrect, ...alt }) => alt),
     }));
 
+    // Gabarito também é enviado ao frontend para ser guardado no sessionStorage.
+    // Isso permite calcular o resultado mesmo se o servidor reiniciar (deploy).
+    // Não é ideal para segurança, mas para um app de estudos é aceitável.
+    const gabaritoFallback = Object.fromEntries(questions.map(q => [q.id, q.gabarito]));
+
     return res.json({
       sessionId,
       category,
       categoryLabel: CATEGORY_LABELS[category] || category,
       count: questionCount,
       questions: sanitizedQuestions,
+      gabaritoFallback,
     });
   } catch (err) {
     console.error('[Quiz/start]', err.message);
@@ -216,13 +222,28 @@ router.post('/submit', async (req, res) => {
     }
   }
 
-  const { sessionId, answers, timeSeconds } = req.body;
+  const { sessionId, answers, timeSeconds, gabaritoFallback, category: categoryFallback, count: countFallback } = req.body;
 
   if (!sessionId || !answers || timeSeconds === undefined) {
     return res.status(400).json({ error: 'Dados incompletos.' });
   }
 
-  const session = sessions.get(sessionId);
+  let session = sessions.get(sessionId);
+
+  // ─── Fallback: sessão sumiu por reinício do servidor (ex: novo deploy) ────────
+  // Se o frontend enviou gabaritoFallback, reconstruímos a sessão localmente
+  // para calcular o resultado. Para usuários logados, o resultado ainda é
+  // salvo no banco normalmente.
+  if (!session && gabaritoFallback && Object.keys(gabaritoFallback).length > 0) {
+    console.log(`[Session] Sessão ${sessionId} não encontrada — usando gabaritoFallback do cliente.`);
+    session = {
+      userId: currentUser ? currentUser.id : 'GUEST',
+      category: categoryFallback || 'completa',
+      count: countFallback || answers.length,
+      startedAt: Date.now(),
+      gabarito: gabaritoFallback,
+    };
+  }
 
   if (!session) {
     return res.status(404).json({ error: 'Sessão não encontrada ou expirada.' });
