@@ -274,8 +274,42 @@ async function populateCache() {
   }
 }
 
+// ─── Histórico de questões por usuário (anti-repetição) ──────────────────────
+// Chave: userId  →  Map<category, Set<questionId>>
+// Quando o usuário vê todas as questões de uma categoria, o histórico é resetado.
+const userHistory = new Map();
+
+const HISTORY_TTL = 7 * 24 * 60 * 60 * 1000; // 7 dias
+
+// Limpeza periódica do histórico de usuários inativos
+setInterval(() => {
+  const now = Date.now();
+  for (const [userId, entry] of userHistory.entries()) {
+    if (now - entry.lastSeen > HISTORY_TTL) {
+      userHistory.delete(userId);
+    }
+  }
+}, 60 * 60 * 1000); // roda a cada 1h
+
+function getOrCreateHistory(userId, category) {
+  if (!userHistory.has(userId)) {
+    userHistory.set(userId, { lastSeen: Date.now(), categories: {} });
+  }
+  const entry = userHistory.get(userId);
+  entry.lastSeen = Date.now();
+  if (!entry.categories[category]) {
+    entry.categories[category] = new Set();
+  }
+  return entry.categories[category];
+}
+
+function recordSeen(userId, category, questionIds) {
+  const seen = getOrCreateHistory(userId, category);
+  for (const id of questionIds) seen.add(id);
+}
+
 // ─── Retorna questões aleatórias para categoria ─────────────────────────────
-async function getQuestions(category, count) {
+async function getQuestions(category, count, userId = null) {
   // Tenta carregar do arquivo local primeiro se o cache estiver zerado
   const totalCache = Object.values(questionPool).reduce((sum, arr) => sum + arr.length, 0);
   if (totalCache === 0) {
@@ -307,17 +341,46 @@ async function getQuestions(category, count) {
     throw new Error(`Questões insuficientes no cache para ${category} (${pool.length} disponíveis, ${count} solicitadas)`);
   }
 
+  // ─── Anti-repetição por usuário ──────────────────────────────────────────
+  let candidatas = pool;
+
+  if (userId) {
+    const seen = getOrCreateHistory(userId, category);
+
+    // Filtra questões que o usuário ainda não viu
+    const novas = pool.filter(q => !seen.has(q.id));
+
+    if (novas.length >= count) {
+      // Tem questões suficientes não vistas — usa só elas
+      candidatas = novas;
+      console.log(`[AntiRepeat] ${userId} | ${category}: ${novas.length} novas disponíveis (${seen.size} já vistas)`);
+    } else {
+      // Usuário esgotou o pool — reseta o histórico e recomeça do zero
+      console.log(`[AntiRepeat] ${userId} | ${category}: pool esgotado (${seen.size} vistas). Resetando histórico.`);
+      seen.clear();
+      candidatas = pool;
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   // Embaralha com Fisher-Yates e retorna
-  const shuffled = [...pool];
+  const shuffled = [...candidatas];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
-  return shuffled.slice(0, count);
+  const selected = shuffled.slice(0, count);
+
+  // Registra no histórico do usuário
+  if (userId) {
+    recordSeen(userId, category, selected.map(q => q.id));
+  }
+
+  return selected;
 }
 
 // ─── Inicializa cache ao importar ────────────────────────────────────────────
 // Tenta carregar do arquivo primeiro
 loadFromFile();
 
-module.exports = { getQuestions, populateCache, loadFromFile, questionPool };
+module.exports = { getQuestions, populateCache, loadFromFile, questionPool, recordSeen };

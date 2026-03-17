@@ -157,7 +157,8 @@ router.post('/start', async (req, res) => {
   }
 
   try {
-    const questions = await getQuestions(category, questionCount);
+    const userId = isGuest ? null : currentUser.id;
+    const questions = await getQuestions(category, questionCount, userId);
 
     const sessionId = uuidv4();
 
