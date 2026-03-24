@@ -2,12 +2,22 @@ const express = require('express');
 const router = express.Router();
 const supabase = require('../services/supabaseClient');
 
+// ─── Validação de email ───────────────────────────────────────────────────────
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
 // ─── Cadastro ─────────────────────────────────────────────────────────────────
 router.post('/register', async (req, res) => {
   const { email, password, nome } = req.body;
 
   if (!email || !password || !nome) {
     return res.status(400).json({ error: 'Email, senha e nome são obrigatórios.' });
+  }
+
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: 'Email inválido.' });
   }
 
   if (password.length < 6) {

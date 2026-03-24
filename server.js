@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 const authRoutes    = require('./src/routes/auth');
 const quizRoutes    = require('./src/routes/quiz');
@@ -15,6 +16,9 @@ app.use((req, res, next) => {
   res.setHeader('X-Backend-Version', '1.0.5-FIX-AUTH');
   next();
 });
+
+// ─── Security Headers (Helmet) ───────────────────────────────────────────────
+app.use(helmet());
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 // Permite apenas seu frontend e localhost
