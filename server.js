@@ -17,10 +17,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ─── Security Headers (Helmet) ───────────────────────────────────────────────
-app.use(helmet());
-
-// ─── CORS ─────────────────────────────────────────────────────────────────────
+// ─── CORS (ANTES de helmet) ──────────────────────────────────────────────────
 // Permite apenas seu frontend e localhost
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'https://enem-practice.vercel.app',
@@ -43,6 +40,11 @@ app.use(cors({
 app.options('*', cors({
   origin: allowedOrigins,
   credentials: true,
+}));
+
+// ─── Security Headers (Helmet) ───────────────────────────────────────────────
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 
 // ─── Middlewares ──────────────────────────────────────────────────────────────
