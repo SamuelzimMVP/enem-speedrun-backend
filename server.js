@@ -23,7 +23,7 @@ app.use(helmet());
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 // Permite apenas seu frontend e localhost
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'https://enem-speedrun-frontend.vercel.app',
+  process.env.FRONTEND_URL || 'https://enem-practice.vercel.app',
   'http://localhost:5500',
   'http://localhost:3000',
   'http://127.0.0.1:5500',
