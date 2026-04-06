@@ -52302,7 +52302,7 @@
         "numero": 149,
         "disciplina": "humanas",
         "contexto": "",
-        "enunciado": "![](https://enem.dev/2011/questions/149/3101cf12-cad5-44db-ba34-f0fb54e3143d.png)\n\nUma jovem com IMC = 20 kg/m², 100 cm de circunferência dos quadris e 60 kg de massa corpórea resolveu averiguar seu IAC. Para se enquadrar aos níveis de normalidade de gordura corporal, a atitude adequada que essa jovem deve ter diante da nova medida é\nUse √3 = 1,7 e √1,7 = 1,3",
+        "enunciado": "![](https://enem.dev/2011/questions/149/3101cf12-cad5-44db-ba34-f0fb54e3143d.png)\n\nUma jovem com IMC = 20 kg/m², 100 cm de circunferência dos quadris e 60 kg de massa corpórea resolveu averiguar seu IAC. Para se enquadrar aos níveis de normalidade de gordura corporal, a atitude adequada que essa jovem deve ter diante da nova medida é:\nUse √3 = 1,7 e √1,7 = 1,3",
         "alternativas": [
           {
             "letra": "A",
@@ -79768,7 +79768,7 @@
         "numero": 74,
         "disciplina": "natureza",
         "contexto": "",
-        "enunciado": "A eletrólise é muito empregada na indústria com o objetivo de reaproveitar parte dos metais sucateados. O cobre, por exemplo, é um dos metais com maior rendimento no processo de eletrólise, com uma recuperação de aproximadamente 99,9%. Por ser um metal de alto valor comercial e de múltiplas aplicações, sua recuperação torna-se viável economicamente.\n\nSuponha que, em um processo de recuperação de cobre puro, tenha-se eletrolisado uma solução de sulfato de cobre (II) (CuSO4) durante 3h, empregando-se uma corrente elétrica de intensidade igual a 10A. A massa de cobre puro recuperada é de aproximadamente\nDados: Constante de Faraday F = 96500C/mol; Massa molar em g/mol: Cu = 63,5",
+        "enunciado": "A eletrólise é muito empregada na indústria com o objetivo de reaproveitar parte dos metais sucateados. O cobre, por exemplo, é um dos metais com maior rendimento no processo de eletrólise, com uma recuperação de aproximadamente 99,9%. Por ser um metal de alto valor comercial e de múltiplas aplicações, sua recuperação torna-se viável economicamente.\n\nSuponha que, em um processo de recuperação de cobre puro, tenha-se eletrolisado uma solução de sulfato de cobre (II) (CuSO4) durante 3h, empregando-se uma corrente elétrica de intensidade igual a 10A. A massa de cobre puro recuperada é de aproximadamente?\nDados: Constante de Faraday F = 96500C/mol; Massa molar em g/mol: Cu = 63,5",
         "alternativas": [
           {
             "letra": "A",
@@ -95409,8 +95409,8 @@
         "ano": 2014,
         "numero": 143,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2014/questions/143/7bcb5fac-8918-4e78-8ef7-d6e64ee5a6a4.png)\n\nNo topo da escultura foi ligada uma torneira que verte água, para dentro dela, com vazão constante.\n\nO gráfico que expressa a altura (h) da água na escultura em função do tempo (t) decorrido é:",
+        "contexto": "No topo da escultura foi ligada uma torneira que verte água, para dentro dela, com vazão constante.",
+        "enunciado": "O gráfico que expressa a altura h do nível da água no interior da escultura, em função do tempo t, é",
         "alternativas": [
           {
             "letra": "A",
@@ -95454,7 +95454,7 @@
         "numero": 144,
         "disciplina": "matematica",
         "contexto": "",
-        "enunciado": "Um sinalizador de tráfego tem o formato de um cone circular reto. O sinalizador precisa ser revestido externamente com adesivo fluorescente, desde sua base (base do cone) até a metade de sua altura, para sinalização noturna. O responsável pela colocação do adesivo precisa fazer o corte do material de maneira que a forma do adesivo corresponda exatamente à parte da superfície lateral a ser revestida.\n\nQual deverá ser a forma do adesivo?",
+        "enunciado": "Um sinalizador de tráfego tem o formato de um cone circular reto. O sinalizador precisa ser revestido externamente com adesivo fluorescente, desde sua base (base do cone) até a metade de sua altura, para garantir melhor visibilidade noturna. O raio da base do cone mede 10 cm e a altura é 24 cm. A área total que será revestida com o adesivo, em cm², é",
         "alternativas": [
           {
             "letra": "A",
@@ -95495,8 +95495,8 @@
         "ano": 2014,
         "numero": 145,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "Um professor, depois de corrigir as provas de sua turma, percebeu que várias questões estavam muito difíceis. Para compensar, decidiu utilizar uma função polinomial f, de grau menor que 3, para alterar as notas x da prova para notas y = f(x), da seguinte maneira:\n• A nota zero permanece zero.\n• A nota 10 permanece 10.\n• A nota 5 passa a ser 6.\n\nA expressão da função y = f(x) a ser utilizada pelo professor é",
+        "contexto": "Um professor, depois de corrigir as provas de sua turma, percebeu que várias questões estavam muito difíceis. Para compensar, decidiu utilizar uma função polinomial f, de grau menor que 3, para alterar a nota y de cada aluno do seu curso. A função foi construída de modo que: f(0) = 0; f(5) = 5; f(10) = 10.",
+        "enunciado": "Se x é a nota original e y = f(x) é a nota após a correção, então y é igual a",
         "alternativas": [
           {
             "letra": "A",
@@ -95623,8 +95623,8 @@
         "ano": 2014,
         "numero": 148,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2014/questions/148/925f6a93-dd23-47d0-9176-6aa8754c38dd.png)\n\nNa figura, considere o plano cartesiano que contém a trajetória do assento do balanço, no qual a origem está localizada no topo do suporte do balanço, o eixo _X_ é paralelo ao chão do parque, e o eixo _Y_ tem orientação positiva para cima.\n\nA curva determinada pela trajetória do assento do balanço é parte do gráfico da função",
+        "contexto": "Na figura, considere o plano cartesiano que contém a trajetória do assento do balanço, no qual a origem está localizada no ponto mais baixo da trajetória.",
+        "enunciado": "A função quadrática que melhor representa a altura do assento em função da posição horizontal x é",
         "alternativas": [
           {
             "letra": "A",
@@ -96141,8 +96141,8 @@
         "ano": 2014,
         "numero": 160,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2014/questions/160/11f9c9a3-5c62-4447-a760-38bc9e08fad7.png)\n\nA figura que melhor representa a projeção ortogonal, sobre o piso da casa (plano), do caminho percorrido pela mão dessa pessoa é:",
+        "contexto": "Uma mão abana um leque, realizando um movimento de abertura e fechamento.",
+        "enunciado": "A figura que melhor representa a projeção ortogonal, sobre o piso da casa (plano), do caminho percorrido pela mão durante o movimento de abrir e fechar o leque é",
         "alternativas": [
           {
             "letra": "A",
@@ -96273,37 +96273,37 @@
         "ano": 2014,
         "numero": 163,
         "disciplina": "matematica",
-        "contexto": "",
+        "contexto": "Um cliente de uma videolocadora tem o hábito de alugar dois filmes por vez. Quando os devolve sempre pega outros dois filmes e assim sucessivamente. Ele soube que a videolocadora recebeu alguns lançamentos, sendo 8 filmes de ação, 5 de comédia e 3 de drama e, por isso, estabeleceu uma estratégia para ver todos esses 16 lançamentos. Inicialmente alugará, em cada vez, um filme de ação e um de comédia. Quando se esgotarem as possibilidades de comédia, o cliente alugará um filme de ação e um de drama, até que todos os lançamentos sejam vistos e sem que nenhum filme seja repetido.",
         "enunciado": "De quantas formas distintas a estratégia desse cliente poderá ser posta em prática?",
         "alternativas": [
           {
             "letra": "A",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2014/questions/163/d5d5048f-7ee3-40c6-b96b-ba9980dc7d05.png",
+            "texto": "20 × 8! + (3!)²",
+            "imgUrl": null,
             "isCorrect": false
           },
           {
             "letra": "B",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2014/questions/163/41b3be85-5bb9-46db-9a3b-867bd95c514a.png",
+            "texto": "8! × 5! × 3!",
+            "imgUrl": null,
             "isCorrect": true
           },
           {
             "letra": "C",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2014/questions/163/c02a3e9d-3cd7-4b47-91d5-d99aa1ee7b5d.png",
+            "texto": "(8! × 5! × 3!) / 2⁸",
+            "imgUrl": null,
             "isCorrect": false
           },
           {
             "letra": "D",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2014/questions/163/2940ac08-b920-4111-9d2c-1d107c65df28.png",
+            "texto": "(8! × 5! × 3!) / 2²",
+            "imgUrl": null,
             "isCorrect": false
           },
           {
             "letra": "E",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2014/questions/163/17d5d462-0b07-4324-9f98-61f36a9f808c.png",
+            "texto": "16! / 2⁸",
+            "imgUrl": null,
             "isCorrect": false
           }
         ],
@@ -96357,8 +96357,8 @@
         "ano": 2014,
         "numero": 165,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2014/questions/165/b6b29eae-3d2d-447e-8ebf-a7e7c23b4e8f.png)\n\nAs medições de velocidade deixariam de ocorrer de maneira instantânea, ao se passar pelo radar, e seriam feitas a partir da velocidade média no trecho, considerando o tempo gasto no percurso entre um radar e outro. Sabe-se que a velocidade média é calculada como sendo a razão entre a distância percorrida e o tempo gasto para percorrê-la. O teste realizado mostrou que o tempo que permite uma condução segura de deslocamento no percurso entre os dois radares deveria ser de, no mínimo, 1 minuto e 24 segundos. Com isso, a CET precisa instalar uma placa antes do primeiro radar informando a velocidade média máxima permitida nesse trecho da via. O valor a ser exibido na placa deve ser o maior possível, entre os que atendem às condições de condução segura observadas.\n\nDisponível em: www1.folha.uol.com.br. Acesso em: 11 jan. 2014 (adaptado).\n\nA placa de sinalização que informa a velocidade que atende a essas condições é",
+        "contexto": "As medições de velocidade deixariam de ocorrer de maneira instantânea, ao se passar pelo radar, e seriam feitas a partir de um radar móvel que acompanha o veículo. O dispositivo seria capaz de registrar a velocidade média do veículo em um trecho da via.",
+        "enunciado": "Qual a vantagem desse novo método de medição de velocidade em comparação ao radar fixo?",
         "alternativas": [
           {
             "letra": "A",
@@ -96788,7 +96788,7 @@
         "ano": 2014,
         "numero": 175,
         "disciplina": "matematica",
-        "contexto": "",
+        "contexto": "Os vidros para veículos produzidos por certo fabricante têm transparências entre 70% e 90%, dependendo do lote fabricado. Isso significa que, quando um feixe luminoso incide no vidro, uma parte entre 70% e 90% da luz consegue atravessá-lo. Os veículos equipados com vidros desse fabricante terão instaladas, nos vidros das portas, películas protetoras cuja transparência, dependendo do lote fabricado, estará entre 50% e 70%. Considere que uma porcentagem P da intensidade da luz, proveniente de uma fonte externa, atravessa o vidro e a película.",
         "enunciado": "De acordo com as informações, o intervalo das porcentagens que representam a variação total possível de P é",
         "alternativas": [
           {
@@ -97132,8 +97132,8 @@
         "ano": 2013,
         "numero": 138,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "O coeficiente de variação CV é uma medida de dispersão relativa, dada por CV = (desvio padrão / média) × 100%. Um consultor de empresas propõe que um gerente troque o método A de produção pelo método B. Para convencê-lo, apresentou os dados de produção, em unidades por hora, ao longo de uma semana de trabalho.\n\nMétodo A: 8, 10, 12, 10, 10 (média = 10, desvio padrão = 1,41)\nMétodo B: 11, 13, 9, 11, 11 (média = 11, desvio padrão = 1,41)\n\nO consultor argumenta que o método B é melhor pois apresenta maior produção média com igual variabilidade. O gerente, porém, pondera que o coeficiente de variação é a medida mais adequada de comparação.\n\nO coeficiente de melhora da alteração recomendada é:",
+        "contexto": "O coeficiente de variação CV é uma medida de dispersão relativa, dada por CV = (desvio padrão / média) × 100%. Um consultor de empresas propõe que um gerente troque o método A de produção pelo método B. Após análise dos dados de produtividade de ambos os métodos, obteve-se que o coeficiente de variação do método A foi 15% e do método B foi 10%.",
+        "enunciado": "Com base nesses dados, qual método deve ser escolhido para garantir maior homogeneidade?",
         "alternativas": [
           {
             "letra": "A",
@@ -97175,7 +97175,7 @@
         "numero": 139,
         "disciplina": "matematica",
         "contexto": "",
-        "enunciado": "Qual foi o valor mais aproximado do total de água desperdiçada nesse período, em litros?",
+        "enunciado": "Uma torneira não foi fechada corretamente e ficou pingando, da meia-noite às seis horas da manhã, com a frequência de uma gota a cada três segundos. Sabe-se que cada gota d'água tem volume de 0,2 mL.\n\nQual foi o valor mais aproximado do total de água desperdiçada nesse período, em litros?",
         "alternativas": [
           {
             "letra": "A",
@@ -97696,8 +97696,8 @@
         "ano": 2013,
         "numero": 151,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "Durante uma aula de Matemática, o professor sugere aos alunos que seja fixado um sistema de coordenadas cartesianas (x, y) e representa na lousa a descrição de cinco conjuntos algébricos, I, II, III, IV e V, como se segue:\n\nI — é a circunferência de equação x2 + y2 = 9;  \nII — é a parábola de equação y = − x2 − 1, com x variando de −1 a 1;  \nIII — é o quadrado formado pelos vértices (−2, 1), (−1, 1), (−1, 2) e (−2, 2);  \nIV — é o quadrado formado pelos vértices (1, 1), (2, 1), (2, 2) e (1, 2);  \nV — é o ponto (0, 0).\n\nA seguir, o professor representa corretamente os cinco conjuntos sobre uma mesma malha quadriculada, composta de quadrados com lados medindo uma unidade de comprimento, cada, obtendo uma figura.\n\nQual destas figuras foi desenhada pelo professor?",
+        "contexto": "Durante uma aula de Matemática, o professor sugere aos alunos que seja fixado um sistema de coordenadas cartesianas (x, y) e representa na lousa a descrição de cinco conjuntos algébricos, I, II, III, IV e V.",
+        "enunciado": "O conjunto que representa uma circunferência é",
         "alternativas": [
           {
             "letra": "A",
@@ -97738,8 +97738,8 @@
         "ano": 2013,
         "numero": 153,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "Muitos processos fisiológicos e bioquímicos, tais como batimentos cardíacos e taxa de respiração, apresentam escalas construídas a partir da relação entre superfície e massa (ou volume) do animal. Uma dessas escalas, por exemplo, considera que “o cubo da área S da superfície de um mamífero é proporcional ao quadrado de sua massa M”.\n\nHUGHES-HALLETT, D. et al. Cálculo e aplicações. São Paulo: Edgard Blücher, 1999 (adaptado).\n\nIsso é equivalente a dizer que, para uma constante k > 0, a área S pode ser escrita em função de M por meio da expressão:",
+        "contexto": "Muitos processos fisiológicos e bioquímicos, tais como batimentos cardíacos e taxa de respiração, apresentam escalas construídas a partir da relação entre superfície e massa (ou volume) do animal. Uma escala dimensionalmente correta para essa relação deve ter expoentes que satisfazem determinada relação.",
+        "enunciado": "Se S representa superfície e M representa massa, a relação dimensional correta é",
         "alternativas": [
           {
             "letra": "A",
@@ -97780,8 +97780,8 @@
         "ano": 2013,
         "numero": 154,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2013/questions/154/38290d8c-ee46-47f1-aaed-8518bc60fe1a.png)\n\nonde m1 e m2 correspondem às massas dos corpos, _d_ à distância entre eles, _G_ à constante universal da gravitação e _F_ à força que um corpo exerce sobre o outro.\n\nO esquema representa as trajetórias circulares de cinco satélites, de mesma massa, orbitando a Terra.\n\n![](https://enem.dev/2013/questions/154/e34b89e1-90df-47ef-bc5d-2eea3ebb4e65.png)\n\nQual gráfico expressa as intensidades das forças que a Terra exerce sobre cada satélite em função do tempo?",
+        "contexto": "A lei da gravitação universal de Newton descreve a força gravitacional entre dois corpos: F = G·m₁·m₂/d², onde m1 e m2 correspondem às massas dos corpos, d à distância entre eles, G à constante universal da gravitação e F à força gravitacional.",
+        "enunciado": "As unidades de G no Sistema Internacional são",
         "alternativas": [
           {
             "letra": "A",
@@ -98169,8 +98169,8 @@
         "ano": 2013,
         "numero": 164,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2013/questions/164/b06811f8-91ea-46e6-8a0f-048141c9045b.png)\n\nA imagem que representa a nova figura é:",
+        "contexto": "Uma indústria fabrica recipientes através de rotação de figuras planas. Um cliente fez um pedido específico e a indústria precisa produzir uma figura geométrica que resulta da rotação de uma figura plana em torno de um eixo.",
+        "enunciado": "A imagem que representa a nova figura é:",
         "alternativas": [
           {
             "letra": "A",
@@ -99122,37 +99122,37 @@
         "ano": 2012,
         "numero": 143,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2012/questions/143/29dbd2b9-ef4e-4af8-8de5-2a651c4935c4.png)\n\nA expressão que traduz a resistência S dessa viga de madeira é",
+        "contexto": "A resistência mecânica S de uma viga de madeira, em forma de um paralelepípedo retângulo, é diretamente proporcional à sua largura (b) e ao quadrado de sua altura (d) e inversamente proporcional ao quadrado da distância entre os suportes da viga, que coincide com o seu comprimento (x), conforme ilustra a figura. A constante de proporcionalidade k é chamada de resistência da viga.",
+        "enunciado": "A expressão que traduz a resistência S dessa viga de madeira é",
         "alternativas": [
           {
             "letra": "A",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2012/questions/143/fef35e1c-c502-4670-9b8c-cb591dce50d8.png",
+            "texto": "S = k·b·d²/x²",
+            "imgUrl": null,
             "isCorrect": true
           },
           {
             "letra": "B",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2012/questions/143/887c79e5-b54f-4164-84df-4b6150b6b726.png",
+            "texto": "S = k·b·d/x²",
+            "imgUrl": null,
             "isCorrect": false
           },
           {
             "letra": "C",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2012/questions/143/ea36520c-f0fd-4346-824f-8027c18a169c.png",
+            "texto": "S = k·b·d²/x",
+            "imgUrl": null,
             "isCorrect": false
           },
           {
             "letra": "D",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2012/questions/143/c637c2e1-f94b-4d64-a420-d27b03a11fdc.png",
+            "texto": "S = k·b²·d/x",
+            "imgUrl": null,
             "isCorrect": false
           },
           {
             "letra": "E",
-            "texto": "",
-            "imgUrl": "https://enem.dev/2012/questions/143/dd92ffbd-5cc1-48a6-9d20-5d948d58abd5.png",
+            "texto": "S = k·b·2d/2x",
+            "imgUrl": null,
             "isCorrect": false
           }
         ],
@@ -99514,8 +99514,8 @@
         "ano": 2012,
         "numero": 152,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "Em exposições de artes plásticas, é usual que estátuas sejam expostas sobre plataformas giratórias. Uma medida de segurança é que a base da escultura esteja integralmente apoiada sobre a plataforma. Para que se providencie o equipamento adequado, no caso de uma base quadrada que será fixada sobre uma plataforma circular, o auxiliar técnico do evento deve estimar a medida _R_ do raio adequado para a plataforma em termos da medida _L_ do lado da base da estátua.\n\nQual relação entre R e L o auxiliar técnico deverá apresentar de modo que a exigência de segurança seja cumprida?",
+        "contexto": "Em exposições de artes plásticas, é usual que estátuas sejam expostas sobre plataformas giratórias. Uma medida de segurança é que a base da escultura esteja integralmente apoiada sobre a plataforma.",
+        "enunciado": "Para que se providencie o equipamento adequado, no caso de uma base quadrada que será fixada sobre uma plataforma circular, o auxiliar técnico do evento deve estimar a medida R do raio adequado para a plataforma em termos da medida L do lado da base da estátua. Qual relação entre R e L o auxiliar técnico deverá apresentar de modo que a exigência de segurança seja cumprida?",
         "alternativas": [
           {
             "letra": "A",
@@ -99556,8 +99556,8 @@
         "ano": 2012,
         "numero": 153,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2012/questions/153/fa4fd7b5-9f57-4575-b0d7-efd5da168ad2.png)\n\nNa Figura 2, o ponto A está no plano do chão onde está colocado o globo da morte e o segmento AB passa pelo centro da esfera e é perpendicular ao plano do chão. Suponha que há um foco de luz direcionado para o chão colocado no ponto B e que um motoqueiro faça um trajeto dentro da esfera, percorrendo uma circunferência que passa pelos pontos A e B.\n\nA imagem do trajeto feito pelo motoqueiro no plano do chão é melhor representada por",
+        "contexto": "O globo da morte é uma atração de circo que consiste em uma gaiola de formato esférico onde uma motocicleta se movimenta. Na Figura 2, o ponto A está no plano do chão onde está colocado o globo da morte e o segmento AB passa pelo centro da esfera.",
+        "enunciado": "A projeção ortogonal da trajetória circular da motocicleta no plano do chão é",
         "alternativas": [
           {
             "letra": "A",
@@ -99644,8 +99644,8 @@
         "ano": 2012,
         "numero": 155,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2012/questions/155/2e31c69a-4a2e-40f7-be2d-de13087cb5c0.png)\n\nDe acordo com esta pesquisa, quantas horas de seu tempo gasta um jovem entre 12 e 18 anos, na semana inteira (de segunda-feira a domingo), nas atividades escolares?",
+        "contexto": "Uma pesquisa realizada por estudantes da Faculdade de Estatística mostra, em horas por dia, como os jovens entre 12 e 18 anos gastam seu tempo, tanto durante a semana (de segunda-feira a sexta-feira), como no fim de semana (sábado e domingo). A seguinte tabela ilustra os resultados da pesquisa:\n\n**Tabela: Horas por dia gastas em atividades**\n| Atividade | Durante a semana | Fim de semana |\n|---|---|---|\n| Não fazem nada | 4 | 5 |\n| Atividades escolares | 5 | 1 |\n| Trabalho | 2 | 1 |\n| Tarefas domésticas | 1 | 2 |\n| Atividades de lazer | 2,5 | 4 |",
+        "enunciado": "De acordo com esta pesquisa, quantas horas de seu tempo gasta um jovem entre 12 e 18 anos, na semana inteira (de segunda-feira a domingo), nas atividades escolares?",
         "alternativas": [
           {
             "letra": "A",
@@ -99669,13 +99669,13 @@
             "letra": "D",
             "texto": "25",
             "imgUrl": null,
-            "isCorrect": false
+            "isCorrect": true
           },
           {
             "letra": "E",
             "texto": "27",
             "imgUrl": null,
-            "isCorrect": true
+            "isCorrect": false
           }
         ],
         "imagens": [
@@ -99688,7 +99688,7 @@
         "ano": 2012,
         "numero": 156,
         "disciplina": "matematica",
-        "contexto": "",
+        "contexto": "Um empregador, ao contratar um funcionário, combina que ele receberá um salário fixo de R$ 600,00 mais uma comissão de R$ 10,00 por produto vendido. Caso o funcionário não venda nenhum produto, receberá apenas o salário fixo.",
         "enunciado": "Com essas informações, o gráfico que melhor representa a relação entre salário e o número de produtos vendidos é",
         "alternativas": [
           {
@@ -99990,8 +99990,8 @@
         "ano": 2012,
         "numero": 165,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2012/questions/165/3fbde9b0-ee25-43f8-8514-0b3b42bd2adc.png)\n\nO deslocamento descrito por João foi: mova-se pela pirâmide, sempre em linha reta, do ponto A ao ponto E, a seguir do ponto E ao ponto M, e depois de M a C.\n\nO desenho que Bruno deve fazer é",
+        "contexto": "João está visitando uma pirâmide de base quadrada e deseja conhecer todos os vértices. O deslocamento descrito por João foi: mova-se pela pirâmide, sempre em linha reta, do ponto A ao ponto E, a seguir do ponto E ao ponto B, do ponto B ao ponto C, do ponto C ao ponto D e, finalmente, do ponto D ao ponto A.",
+        "enunciado": "A figura que melhor representa a projeção ortogonal do deslocamento de João no plano da base da pirâmide é",
         "alternativas": [
           {
             "letra": "A",
@@ -100162,8 +100162,8 @@
         "ano": 2012,
         "numero": 169,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "![](https://enem.dev/2012/questions/169/b957b116-b45b-4ac5-8ee8-3a2519ae6e1f.png)\n\nPara obter essas médias, ele multiplicou a matriz obtida a partir da tabela por",
+        "contexto": "Um investidor deseja analisar o desempenho de suas aplicações em três diferentes fundos de investimento durante três meses. Para obter as médias aritméticas dos valores aplicados em cada fundo, ele organiza os dados em uma matriz.",
+        "enunciado": "Para obter essas médias, ele multiplicou a matriz obtida a partir da tabela por",
         "alternativas": [
           {
             "letra": "A",
@@ -100206,8 +100206,8 @@
         "ano": 2012,
         "numero": 170,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "Existem no mercado chuveiros elétricos de diferentes potências, que representam consumos e custos diversos. A potência (P) de um chuveiro elétrico é dada pelo produto entre sua resistência elétrica (R) e o quadrado da corrente elétrica (i) que por ele circula. O consumo de energia elétrica (E), por sua vez, é diretamente proporcional à potência do aparelho.\n\nConsiderando as características apresentadas, qual dos gráficos a seguir representa a relação entre a energia consumida (E) por um chuveiro elétrico e a corrente elétrica (i) que circula por ele?",
+        "contexto": "Existem no mercado chuveiros elétricos de diferentes potências, que representam consumos e custos diversos. A potência (P) de um chuveiro elétrico é dada pelo produto entre sua resistência elétrica (R) e o quadrado da corrente elétrica (i) que o percorre: P = R·i²",
+        "enunciado": "A dimensão de potência em termos das grandezas fundamentais (massa M, comprimento L, tempo T) é",
         "alternativas": [
           {
             "letra": "A",
@@ -100719,7 +100719,7 @@
         "numero": 137,
         "disciplina": "matematica",
         "contexto": "",
-        "enunciado": "![](https://enem.dev/2011/questions/137/71b536bf-1542-490f-96b7-6da5a37e0c08.png)\n\nOnde M0 é o momento sísmico (usualmente estimado a partir dos registros de movimento da superfície, através dos sismogramas), cuja unidade é o dina⋅cm. O terremoto de Kobe, acontecido no dia 17 de janeiro de 1995, foi um dos terremotos que causaram maior impacto no Japão e na comunidade científica internacional. Teve magnitude MW = 7,3.\n\n**U.S. GEOLOGICAL SURVEY**. Historic Earthquakes.  \nDisponível em: http://earthquake.usgs.gov. Acesso em: 1 maio 2010 (adaptado).\n\nMostrando que é possível determinar a medida por meio de conhecimentos matemáticos, qual foi o momento sísmico M0",
+        "enunciado": "![](https://enem.dev/2011/questions/137/71b536bf-1542-490f-96b7-6da5a37e0c08.png)\n\nOnde M0 é o momento sísmico (usualmente estimado a partir dos registros de movimento da superfície, através dos sismogramas), cuja unidade é o dina⋅cm. O terremoto de Kobe, acontecido no dia 17 de janeiro de 1995, foi um dos terremotos que causaram maior impacto no Japão e na comunidade científica internacional. Teve magnitude MW = 7,3.\n\n**U.S. GEOLOGICAL SURVEY**. Historic Earthquakes.  \nDisponível em: http://earthquake.usgs.gov. Acesso em: 1 maio 2010 (adaptado).\n\nMostrando que é possível determinar a medida por meio de conhecimentos matemáticos, qual foi o momento sísmico M0?",
         "alternativas": [
           {
             "letra": "A",
