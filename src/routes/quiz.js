@@ -117,7 +117,7 @@ setInterval(() => {
 
 // ─── Categorias válidas ───────────────────────────────────────────────────────
 const VALID_CATEGORIES = [
-  'humanas', 'exatas', 'completa',
+  'humanas', 'exatas', 'completa', 'matematica',
 ];
 
 const VALID_COUNTS = [10, 20, 30];
@@ -127,7 +127,11 @@ const CATEGORY_LABELS = {
   humanas: 'Humanas (Ling. + C. Humanas)',
   exatas: 'Exatas (C. Natureza + Mat.)',
   completa: 'Prova Completa',
+  matematica: 'Matemática',
 };
+
+// ─── Anos disponíveis para filtro ─────────────────────────────────────────────
+const AVAILABLE_YEARS = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
 
 // ─── POST /api/quiz/start ─────────────────────────────────────────────────────
 router.post('/start', async (req, res) => {
@@ -144,7 +148,7 @@ router.post('/start', async (req, res) => {
     }
   }
 
-  const { category, count } = req.body;
+  const { category, count, year } = req.body;
   const isGuest = !currentUser;
 
   if (!VALID_CATEGORIES.includes(category)) {
@@ -156,8 +160,18 @@ router.post('/start', async (req, res) => {
     return res.status(400).json({ error: 'Quantidade inválida. Use 10, 20 ou 30.' });
   }
 
+  // Validação do ano (opcional)
+  const filters = {};
+  if (year) {
+    const yearNum = Number(year);
+    if (!AVAILABLE_YEARS.includes(yearNum)) {
+      return res.status(400).json({ error: `Ano inválido. Use um dos anos: ${AVAILABLE_YEARS.join(', ')}` });
+    }
+    filters.year = yearNum;
+  }
+
   try {
-    const questions = await getQuestions(category, questionCount);
+    const questions = await getQuestions(category, questionCount, filters);
 
     const sessionId = uuidv4();
 
@@ -185,6 +199,38 @@ router.post('/start', async (req, res) => {
   } catch (err) {
     console.error('[Quiz/start]', err.message);
     return res.status(500).json({ error: `Erro ao buscar questões: ${err.message}` });
+  }
+});
+
+// ─── GET /api/quiz/years ──────────────────────────────────────────────────────
+// Retorna anos disponíveis e contagem de questões por ano/categoria
+router.get('/years', async (req, res) => {
+  try {
+    const { questionPool, CATEGORY_TO_DISCIPLINES } = require('../services/enemApiService');
+
+    const result = {};
+
+    // Para cada categoria, conta questões por ano
+    for (const [category, disciplines] of Object.entries(CATEGORY_TO_DISCIPLINES)) {
+      result[category] = {};
+
+      let pool = [];
+      for (const disc of disciplines) {
+        pool = pool.concat(questionPool[disc] || []);
+      }
+
+      // Conta por ano
+      for (const q of pool) {
+        if (q.ano && q.ano > 0) {
+          result[category][q.ano] = (result[category][q.ano] || 0) + 1;
+        }
+      }
+    }
+
+    return res.json({ years: AVAILABLE_YEARS, counts: result });
+  } catch (err) {
+    console.error('[Quiz/years]', err.message);
+    return res.status(500).json({ error: 'Erro ao buscar anos disponíveis.' });
   }
 });
 

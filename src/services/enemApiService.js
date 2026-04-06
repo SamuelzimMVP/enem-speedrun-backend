@@ -79,6 +79,7 @@ const CATEGORY_TO_DISCIPLINES = {
   humanas: ['linguagens', 'humanas'],
   exatas: ['natureza', 'matematica'],
   completa: ['linguagens', 'humanas', 'natureza', 'matematica'],
+  matematica: ['matematica'],
 };
 
 // ─── Map disciplina da API para chave do cache ───────────────────────────────
@@ -281,7 +282,7 @@ async function populateCache() {
 }
 
 // ─── Retorna questões aleatórias para categoria ─────────────────────────────
-async function getQuestions(category, count) {
+async function getQuestions(category, count, filters = {}) {
   // Tenta carregar do arquivo local primeiro se o cache estiver zerado
   const totalCache = Object.values(questionPool).reduce((sum, arr) => sum + arr.length, 0);
   if (totalCache === 0) {
@@ -299,6 +300,13 @@ async function getQuestions(category, count) {
     pool = pool.concat(questionPool[disc] || []);
   }
 
+  // Aplica filtro por ano se especificado
+  if (filters.year) {
+    const year = Number(filters.year);
+    pool = pool.filter(q => q.ano === year);
+    console.log(`[Cache] Filtro por ano=${year}: ${pool.length} questões disponíveis`);
+  }
+
   // Se ainda não tem questões suficientes, tenta da API
   if (pool.length < count) {
     console.log(`[Cache] Questões insuficientes para ${category}, buscando da API...`);
@@ -306,6 +314,11 @@ async function getQuestions(category, count) {
     pool = [];
     for (const disc of disciplines) {
       pool = pool.concat(questionPool[disc] || []);
+    }
+    // Reaplica filtro após repopular
+    if (filters.year) {
+      const year = Number(filters.year);
+      pool = pool.filter(q => q.ano === year);
     }
   }
 
@@ -326,4 +339,4 @@ async function getQuestions(category, count) {
 // Tenta carregar do arquivo primeiro
 loadFromFile();
 
-module.exports = { getQuestions, populateCache, loadFromFile, questionPool };
+module.exports = { getQuestions, populateCache, loadFromFile, questionPool, CATEGORY_TO_DISCIPLINES };
