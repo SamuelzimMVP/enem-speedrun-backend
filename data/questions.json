@@ -70056,8 +70056,8 @@
         "ano": 2015,
         "numero": 55,
         "disciplina": "natureza",
-        "contexto": "",
-        "enunciado": "Qual o valor mais próximo do volume da solução nutritiva, em litros, que o produtor deve adicionar ao tanque?",
+        "contexto": "A hidroponia pode ser definida como uma técnica de produção de vegetais sem necessariamente a presença de solo. Uma das formas de implementação é manter as plantas com suas raízes suspensas em meio líquido, de onde retiram os nutrientes essenciais.",
+        "enunciado": "Suponha que um produtor de rúcula hidropônica precise ajustar a concentração do íon nitrato (NO3–) para 0,009 mol/L em um tanque de 5 000 litros e, para tanto, tem em mãos uma solução comercial nutritiva de nitrato de cálcio 90 g/L. As massas molares dos elementos N, O e Ca são iguais a 14 g/mol, 16 g/mol e 40 g/mol, respectivamente.\n\nQual o valor mais próximo do volume da solução nutritiva, em litros, que o produtor deve adicionar ao tanque?",
         "alternativas": [
           {
             "letra": "A",
