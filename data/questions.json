@@ -95235,41 +95235,43 @@
         "ano": 2014,
         "numero": 139,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "Para comemorar o aniversário de uma cidade, um artista projetou uma escultura transparente e oca, cujo formato foi inspirado em uma ampulheta. Ela é formada por três partes de mesma altura: duas são troncos de cone iguais e a outra é um cilindro.\n\nNo topo da escultura foi ligada uma torneira que verte água para dentro dela com vazão constante.\n\nO gráfico que expressa a altura (h) da água na escultura em função do tempo (t) decorrido é",
+        "contexto": "Para comemorar o aniversário de uma cidade, um artista projetou uma escultura transparente e oca, cujo formato foi inspirado em uma ampulheta. Ela é formada por três partes de mesma altura: duas são troncos de cones iguais e a outra é um cilindro. A figura é a vista frontal dessa escultura.\n\nNo topo da escultura foi ligada uma torneira que verte água, para dentro dela, com vazão constante.",
+        "enunciado": "O gráfico que expressa a altura (h) da água na escultura em função do tempo (t) decorrido é",
         "alternativas": [
           {
             "letra": "A",
-            "texto": "1/8",
-            "imgUrl": null,
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/143/4d7826cb-921c-4dff-97ce-81149babd82f.png",
             "isCorrect": false
           },
           {
             "letra": "B",
-            "texto": "7/8",
-            "imgUrl": null,
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/143/2d316985-fd36-476a-bbe0-7afe7e3b023f.png",
             "isCorrect": false
           },
           {
             "letra": "C",
-            "texto": "8/7",
-            "imgUrl": null,
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/143/8e77cb3b-c40c-4d99-99ed-8570710b158b.png",
             "isCorrect": false
           },
           {
             "letra": "D",
-            "texto": "8/9",
-            "imgUrl": null,
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/143/34491019-1b0e-408f-8215-32a73523f426.png",
             "isCorrect": true
           },
           {
             "letra": "E",
-            "texto": "9/8",
-            "imgUrl": null,
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/143/98ea7324-d1b1-4850-8c7e-e38c23efd1f6.png",
             "isCorrect": false
           }
         ],
-        "imagens": [],
+        "imagens": [
+          "https://enem.dev/2014/questions/143/7bcb5fac-8918-4e78-8ef7-d6e64ee5a6a4.png"
+        ],
         "gabarito": "D"
       },
       {
@@ -95797,7 +95799,7 @@
         "ano": 2014,
         "numero": 152,
         "disciplina": "matematica",
-        "contexto": "",
+        "contexto": "Uma organização não governamental divulgou um levantamento de dados realizado em algumas cidades brasileiras sobre saneamento básico. Os resultados indicam que somente 36% do esgoto gerado nessas cidades é tratado, o que mostra que 8 bilhões de litros de esgoto sem nenhum tratamento são lançados todos os dias nas águas.\n\nUma campanha para melhorar o saneamento básico nessas cidades tem como meta a redução da quantidade de esgoto lançado nas águas diariamente, sem tratamento, para 4 bilhões de litros nos próximos meses.",
         "enunciado": "Se o volume de esgoto gerado permanecer o mesmo e a meta dessa campanha se concretizar, o percentual de esgoto tratado passará a ser",
         "alternativas": [
           {
@@ -95883,42 +95885,44 @@
         "ano": 2014,
         "numero": 154,
         "disciplina": "matematica",
-        "contexto": "",
-        "enunciado": "O acesso entre os dois andares de uma casa é feito através de uma escada circular (escada caracol). Os cinco pontos A, B, C, D, E sobre o corrimão estão igualmente espaçados, e os pontos P, A e E estão em uma mesma reta. Nessa escada, uma pessoa caminha deslizando a mão sobre o corrimão do ponto A até o ponto D.\n\nA figura que melhor representa a projeção ortogonal, sobre o piso da casa (plano), do caminho percorrido pela mão dessa pessoa é",
+        "contexto": "O acesso entre os dois andares de uma casa é feito através de uma escada circular (escada caracol), representada na figura. Os cinco pontos A, B, C, D, E sobre o corrimão estão igualmente espaçados, e os pontos P, A e E estão em uma mesma reta. Nessa escada, uma pessoa caminha deslizando sua mão sobre o corrimão, indo do ponto A até o ponto D.",
+        "enunciado": "A figura que melhor representa a projeção ortogonal, sobre o piso da casa (plano), do caminho percorrido pela mão dessa pessoa é",
         "alternativas": [
           {
             "letra": "A",
-            "texto": "I",
-            "imgUrl": null,
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/154/projection-a.png",
             "isCorrect": false
           },
           {
             "letra": "B",
-            "texto": "II",
-            "imgUrl": null,
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/154/projection-b.png",
             "isCorrect": false
           },
           {
             "letra": "C",
-            "texto": "III",
-            "imgUrl": null,
-            "isCorrect": false
-          },
-          {
-            "letra": "D",
-            "texto": "IV",
-            "imgUrl": null,
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/154/projection-c.png",
             "isCorrect": true
           },
           {
+            "letra": "D",
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/154/projection-d.png",
+            "isCorrect": false
+          },
+          {
             "letra": "E",
-            "texto": "V",
-            "imgUrl": null,
+            "texto": "",
+            "imgUrl": "https://enem.dev/2014/questions/154/projection-e.png",
             "isCorrect": false
           }
         ],
-        "imagens": [],
-        "gabarito": "D"
+        "imagens": [
+          "https://enem.dev/2014/questions/154/staircase.png"
+        ],
+        "gabarito": "C"
       },
       {
         "id": "2014-155-matematica",
@@ -96445,7 +96449,7 @@
         "ano": 2014,
         "numero": 167,
         "disciplina": "matematica",
-        "contexto": "",
+        "contexto": "Uma empresa farmacêutica produz medicamentos em pílulas, cada uma na forma de um cilindro com uma semiesfera com o mesmo raio do cilindro em cada uma de suas extremidades. Essas pílulas são moldadas por uma máquina programada para que os cilindros tenham sempre 10 mm de comprimento, adequando o raio de acordo com o volume desejado.\n\nUm medicamento é produzido em pílulas com 5 mm de raio. Para facilitar a deglutição, deseja-se produzir esse medicamento diminuindo o raio para 4 mm, e, por consequência, seu volume. Isso exige a reprogramação da máquina que produz essas pílulas.",
         "enunciado": "Use 3 como valor aproximado para π.\n\nA redução do volume da pílula, em milímetros cúbicos, após a reprogramação da máquina, será igual a",
         "alternativas": [
           {
@@ -96618,7 +96622,7 @@
         "ano": 2014,
         "numero": 171,
         "disciplina": "matematica",
-        "contexto": "",
+        "contexto": "Uma ponte precisa ser dimensionada de forma que possa ter três pontos de sustentação. Sabe-se que a carga máxima suportada pela ponte será de 12 t. O ponto de sustentação central receberá 60% da carga da ponte, e o restante da carga será distribuído igualmente entre os outros dois pontos de sustentação.",
         "enunciado": "No caso de carga máxima, as cargas recebidas pelos três pontos de sustentação serão, respectivamente,",
         "alternativas": [
           {
@@ -96746,36 +96750,36 @@
         "ano": 2014,
         "numero": 174,
         "disciplina": "matematica",
-        "contexto": "",
+        "contexto": "Durante uma epidemia de uma gripe viral, o secretário de saúde de um município comprou 16 galões de álcool em gel, com 4 litros de capacidade cada um, para distribuir igualmente em recipientes para 10 escolas públicas do município.",
         "enunciado": "O secretário de saúde comprará recipientes de um mesmo tipo, de modo a instalar 20 deles em cada escola, abastecidos com álcool em gel na sua capacidade máxima, de forma a utilizar todo o gel dos galões de uma só vez.\n\nQue tipo de recipiente o secretário de saúde deve comprar?",
         "alternativas": [
           {
             "letra": "A",
-            "texto": "I",
+            "texto": "I (0,125 litros)",
             "imgUrl": null,
             "isCorrect": false
           },
           {
             "letra": "B",
-            "texto": "II",
+            "texto": "II (0,250 litros)",
             "imgUrl": null,
             "isCorrect": false
           },
           {
             "letra": "C",
-            "texto": "III",
+            "texto": "III (0,320 litros)",
             "imgUrl": null,
             "isCorrect": true
           },
           {
             "letra": "D",
-            "texto": "IV",
+            "texto": "IV (0,500 litros)",
             "imgUrl": null,
             "isCorrect": false
           },
           {
             "letra": "E",
-            "texto": "V",
+            "texto": "V (0,800 litros)",
             "imgUrl": null,
             "isCorrect": false
           }
@@ -97002,7 +97006,7 @@
         "ano": 2014,
         "numero": 180,
         "disciplina": "matematica",
-        "contexto": "",
+        "contexto": "Um executivo sempre viaja entre as cidades A e B, que estão localizadas em fusos horários distintos. O tempo de duração da viagem de avião entre as duas cidades é de 6 horas. Ele sempre pega um voo que sai de A às 15h e chega à cidade B às 18h (respectivos horários locais).\n\nCerto dia, ao chegar à cidade B, soube que precisava estar de volta à cidade A, no máximo, até as 13h do dia seguinte (horário local de A).",
         "enunciado": "Para que o executivo chegue à cidade A no horário correto e admitindo que não haja atrasos, ele deve pegar um voo saindo da cidade B, em horário local de B, no máximo à(s)",
         "alternativas": [
           {
