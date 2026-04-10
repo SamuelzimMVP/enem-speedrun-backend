@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const morgan = require('morgan');
 
 const authRoutes    = require('./src/routes/auth');
 const quizRoutes    = require('./src/routes/quiz');
@@ -11,11 +12,13 @@ const rankingRoutes = require('./src/routes/ranking');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware de debug para versão
-app.use((req, res, next) => {
-  res.setHeader('X-Backend-Version', '1.0.5-FIX-AUTH');
-  next();
-});
+// ─── Request Logging (Morgan) ────────────────────────────────────────────────
+// Formato: method URL status response_time
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+} else {
+  app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+}
 
 // ─── CORS (ANTES de helmet) ──────────────────────────────────────────────────
 // Permite apenas seu frontend e localhost

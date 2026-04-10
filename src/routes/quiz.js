@@ -5,6 +5,23 @@ const { authMiddleware, optionalAuth } = require('../middleware/authMiddleware')
 const { getQuestions } = require('../services/enemApiService');
 const supabase = require('../services/supabaseClient');
 
+// ─── Helper: extrair usuário do token (DRY) ─────────────────────────────────
+async function getUserFromToken(req) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+  
+  const token = authHeader.split(' ')[1];
+  if (!token || token === 'null' || token === 'undefined') return null;
+  
+  try {
+    const { data: { user } } = await supabase.auth.getUser(token);
+    return user;
+  } catch (e) {
+    console.warn('[Auth] Token inválido:', e.message);
+    return null;
+  }
+}
+
 // ─── Definições de conquistas ──────────────────────────────────────
 const ACHIEVEMENTS = [
   {
@@ -135,21 +152,11 @@ const AVAILABLE_YEARS = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2
 
 // ─── POST /api/quiz/start ─────────────────────────────────────────────────────
 router.post('/start', async (req, res) => {
-  // Autenticação opcional manual
-  let currentUser = null;
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.split(' ')[1];
-    if (token && token !== 'null' && token !== 'undefined') {
-      try {
-        const { data: { user } } = await supabase.auth.getUser(token);
-        currentUser = user;
-      } catch (e) {}
-    }
-  }
+  // Usa helper DRY ao invés de lógica duplicada
+  const currentUser = await getUserFromToken(req);
+  const isGuest = !currentUser;
 
   const { category, count, year } = req.body;
-  const isGuest = !currentUser;
 
   if (!VALID_CATEGORIES.includes(category)) {
     return res.status(400).json({ error: `Categoria inválida: ${category}` });
@@ -182,6 +189,7 @@ router.post('/start', async (req, res) => {
       count: questionCount,
       startedAt: Date.now(),
       gabarito: Object.fromEntries(questions.map(q => [q.id, q.gabarito])),
+      processing: false, // Flag para prevenir race condition
     });
 
     const sanitizedQuestions = questions.map(({ gabarito, ...q }) => ({
@@ -248,18 +256,8 @@ router.get('/start-test', async (req, res) => {
 
 // ─── POST /api/quiz/submit ────────────────────────────────────────────────────
 router.post('/submit', async (req, res) => {
-  // Autenticação opcional manual para máxima compatibilidade com visitantes
-  let currentUser = null;
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.split(' ')[1];
-    if (token && token !== 'null' && token !== 'undefined') {
-      try {
-        const { data: { user } } = await supabase.auth.getUser(token);
-        currentUser = user;
-      } catch (e) { /* ignora erro de auth */ }
-    }
-  }
+  // Usa helper DRY ao invés de lógica duplicada
+  const currentUser = await getUserFromToken(req);
 
   const { sessionId, answers, timeSeconds } = req.body;
 
@@ -273,19 +271,37 @@ router.post('/submit', async (req, res) => {
     return res.status(404).json({ error: 'Sessão não encontrada ou expirada.' });
   }
 
+  // Previne race condition: marca sessão como processando
+  if (session.processing) {
+    return res.status(409).json({ error: 'Submissão já em processamento. Aguarde.' });
+  }
+  session.processing = true;
+
   // Se a sessão era de usuário logado, valida o usuário atual
   if (session.userId !== 'GUEST' && (!currentUser || session.userId !== currentUser.id)) {
+    sessions.delete(sessionId); // Limpa sessão inválida
     return res.status(403).json({ error: 'Sessão não pertence a este usuário.' });
   }
 
   const isGuest = session.userId === 'GUEST';
+
+  // Validação das respostas
+  if (!Array.isArray(answers) || answers.length === 0) {
+    sessions.delete(sessionId);
+    return res.status(400).json({ error: 'Nenhuma resposta enviada.' });
+  }
 
   let correct = 0;
   const details = [];
 
   for (const { questionId, selected } of answers) {
     const gabarito = session.gabarito[questionId];
-    const isCorrect = selected?.toUpperCase() === gabarito?.toUpperCase();
+    if (!gabarito) {
+      console.warn(`[Quiz/submit] Questão não encontrada no gabarito: ${questionId}`);
+      continue;
+    }
+    
+    const isCorrect = selected?.toUpperCase() === gabarito.toUpperCase();
     if (isCorrect) correct++;
     details.push({ questionId, selected, gabarito, correct: isCorrect });
   }
@@ -306,7 +322,7 @@ router.post('/submit', async (req, res) => {
       });
     }
 
-    // Garante que o perfil existe antes de salvar o resultado (para aparecer no ranking_view)
+    // Garante que o perfil existe antes de salvar o resultado
     await supabase.from('profiles').upsert({
       id: currentUser.id,
       nome: currentUser.user_metadata?.nome || 'Usuário',
@@ -352,6 +368,7 @@ router.post('/submit', async (req, res) => {
     });
   } catch (err) {
     console.error('[Quiz/submit]', err.message);
+    sessions.delete(sessionId); // Garante limpeza em caso de erro
     return res.status(500).json({ error: 'Erro ao salvar resultado.' });
   }
 });

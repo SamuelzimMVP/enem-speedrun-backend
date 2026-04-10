@@ -1,9 +1,26 @@
-const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 
 const ENEM_API_BASE = 'https://api.enem.dev/v1';
 const QUESTIONS_FILE = path.join(__dirname, '..', '..', 'data', 'questions.json');
+
+// ─── Fetch com timeout (AbortController) ─────────────────────────────────────
+async function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  
+  try {
+    // Usa fetch nativo (Node 18+) ou node-fetch
+    const fetchFn = globalThis.fetch || require('node-fetch');
+    const response = await fetchFn(url, {
+      ...options,
+      signal: controller.signal
+    });
+    return response;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 // ─── Enunciados corrigidos manualmente ───────────────────────────────────────
 // Estas questões têm context=null na API enem.dev.
@@ -53,17 +70,56 @@ const questionPool = {
   matematica: [],
 };
 let cacheLoadedAt = null;
-const CACHE_TTL = 3 * 24 * 60 * 60 * 1000; // 3 dias (mais persistente)
+let isLoading = false; // Previne carregamento concorrente
+const CACHE_TTL = 3 * 24 * 60 * 60 * 1000; // 3 dias
+
+// ─── Validação de Schema ─────────────────────────────────────────────────────
+function validateQuestion(q) {
+  if (!q) return false;
+  if (!q.id || typeof q.id !== 'string') return false;
+  if (!q.enunciado || q.enunciado.trim().length < 10) return false;
+  if (!Array.isArray(q.alternativas) || q.alternativas.length < 4) return false;
+  if (!q.gabarito || !['A', 'B', 'C', 'D', 'E'].includes(q.gabarito)) return false;
+  
+  // Verificar se há pelo menos uma alternativa correta
+  const hasCorrect = q.alternativas.some(a => a.isCorrect === true);
+  if (!hasCorrect) return false;
+  
+  return true;
+}
 
 // ─── Carrega questões do arquivo local ────────────────────────────────────────
 function loadFromFile() {
+  if (isLoading) return false; // Previne carregamento concorrente
+  
   try {
     if (fs.existsSync(QUESTIONS_FILE)) {
       const data = JSON.parse(fs.readFileSync(QUESTIONS_FILE, 'utf-8'));
       if (data.questions) {
-        Object.assign(questionPool, data.questions);
+        // Validação de schema básica
+        let validCount = 0;
+        let invalidCount = 0;
+        
+        for (const [disciplina, questions] of Object.entries(data.questions)) {
+          if (!questionPool[disciplina]) continue;
+          
+          const validQuestions = questions.filter(q => {
+            const isValid = validateQuestion(q);
+            if (!isValid) {
+              invalidCount++;
+              console.warn(`[Schema] Questão inválida: ${q?.id || 'unknown'}`);
+            } else {
+              validCount++;
+            }
+            return isValid;
+          });
+          
+          questionPool[disciplina] = validQuestions;
+        }
+        
         cacheLoadedAt = new Date(data.generatedAt).getTime();
         console.log(`[Cache] Carregado de ${QUESTIONS_FILE}`);
+        console.log(`[Cache] Válidas: ${validCount}, Inválidas: ${invalidCount}`);
         console.log(`[Cache] Total: linguagens=${questionPool.linguagens.length}, humanas=${questionPool.humanas.length}, natureza=${questionPool.natureza.length}, matematica=${questionPool.matematica.length}`);
         return true;
       }
@@ -194,9 +250,10 @@ async function fetchQuestionsByYear(year, limit = 50, retries = 3) {
 
     let res;
     try {
-      res = await fetch(url, { headers: { Accept: 'application/json' }, timeout: 15000 });
+      res = await fetchWithTimeout(url, { headers: { Accept: 'application/json' } });
     } catch (err) {
-      console.warn(`[ENEM API] Erro de rede para year=${year}: ${err.message}`);
+      const errorMsg = err.name === 'AbortError' ? 'Timeout (15s)' : err.message;
+      console.warn(`[ENEM API] Erro de rede para year=${year}: ${errorMsg}`);
       if (retries > 0) {
         console.warn(`[ENEM API] Tentando novamente (${retries} restantes)...`);
         await new Promise(r => setTimeout(r, 2000));
@@ -233,9 +290,16 @@ async function fetchQuestionsByYear(year, limit = 50, retries = 3) {
 
 // ─── Popula cache ────────────────────────────────────────────────────────────
 async function populateCache() {
+  if (isLoading) {
+    console.log('[Cache] Carregamento já em andamento, aguardando...');
+    return;
+  }
+  
+  isLoading = true;
   console.log('[Cache] Populando cache de questões...');
+  
   try {
-    const exams = await fetch(`${ENEM_API_BASE}/exams`).then(r => r.json());
+    const exams = await fetchWithTimeout(`${ENEM_API_BASE}/exams`).then(r => r.json());
     if (!Array.isArray(exams)) throw new Error('Falha ao obter lista de exames');
 
     const seenIds = new Set();
@@ -278,6 +342,8 @@ async function populateCache() {
     }
   } catch (err) {
     console.error('[Cache] Erro fatal ao popular cache:', err.message);
+  } finally {
+    isLoading = false;
   }
 }
 
