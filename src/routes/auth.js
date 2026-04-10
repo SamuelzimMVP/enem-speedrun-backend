@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const supabase = require('../services/supabaseClient');
+const { supabase, supabaseAdmin } = require('../services/supabaseClient');
 
 // ─── Validação de email ───────────────────────────────────────────────────────
 function isValidEmail(email) {
@@ -25,7 +25,7 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-    const { data, error } = await supabase.auth.admin.createUser({
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,

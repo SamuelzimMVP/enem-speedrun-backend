@@ -3,7 +3,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const { authMiddleware, optionalAuth } = require('../middleware/authMiddleware');
 const { getQuestions } = require('../services/enemApiService');
-const supabase = require('../services/supabaseClient');
+const { supabase } = require('../services/supabaseClient');
 
 // ─── Helper: extrair usuário do token (DRY) ─────────────────────────────────
 async function getUserFromToken(req) {
@@ -205,8 +205,8 @@ router.post('/start', async (req, res) => {
       questions: sanitizedQuestions,
     });
   } catch (err) {
-    console.error('[Quiz/start]', err.message);
-    return res.status(500).json({ error: `Erro ao buscar questões: ${err.message}` });
+    console.error('[Quiz/start]', err);
+    return res.status(500).json({ error: 'Erro ao buscar questões. Tente novamente.' });
   }
 });
 
@@ -243,8 +243,11 @@ router.get('/years', async (req, res) => {
 });
 
 // ─── GET /api/quiz/start-test ─────────────────────────────────────────────────
-// Rota de teste sem auth, apenas para debug rápido
+// Rota de teste — disponível apenas em desenvolvimento
 router.get('/start-test', async (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(404).json({ error: 'Rota indisponível em produção.' });
+  }
   try {
     const questions = await getQuestions('completa', 10);
     res.json({ questions });
@@ -271,15 +274,11 @@ router.post('/submit', async (req, res) => {
     return res.status(404).json({ error: 'Sessão não encontrada ou expirada.' });
   }
 
-  // Previne race condition: marca sessão como processando
-  if (session.processing) {
-    return res.status(409).json({ error: 'Submissão já em processamento. Aguarde.' });
-  }
-  session.processing = true;
+  // Previne race condition: deleta sessão atomicamente antes de processar
+  sessions.delete(sessionId);
 
   // Se a sessão era de usuário logado, valida o usuário atual
   if (session.userId !== 'GUEST' && (!currentUser || session.userId !== currentUser.id)) {
-    sessions.delete(sessionId); // Limpa sessão inválida
     return res.status(403).json({ error: 'Sessão não pertence a este usuário.' });
   }
 
@@ -287,7 +286,6 @@ router.post('/submit', async (req, res) => {
 
   // Validação das respostas
   if (!Array.isArray(answers) || answers.length === 0) {
-    sessions.delete(sessionId);
     return res.status(400).json({ error: 'Nenhuma resposta enviada.' });
   }
 
@@ -307,14 +305,15 @@ router.post('/submit', async (req, res) => {
   }
 
   const total = session.count;
+  // Calcula tempo no servidor (anti-cheat)
+  const serverTimeSeconds = Math.round((Date.now() - session.startedAt) / 1000);
 
   try {
     if (isGuest) {
-      sessions.delete(sessionId);
       return res.json({
         correct,
         total,
-        timeSeconds: Math.round(timeSeconds),
+        timeSeconds: serverTimeSeconds,
         percentage: Math.round((correct / total) * 100),
         position: null,
         details,
@@ -334,7 +333,7 @@ router.post('/submit', async (req, res) => {
       category: session.category,
       question_count: total,
       correct_answers: correct,
-      time_seconds: Math.round(timeSeconds),
+      time_seconds: serverTimeSeconds,
       completed_at: new Date().toISOString(),
     }).select().single();
 
@@ -343,24 +342,25 @@ router.post('/submit', async (req, res) => {
       throw new Error('Falha ao salvar resultado no banco de dados.');
     }
 
+    const safeCorrect = Number(correct) || 0;
+    const safeTime = Math.max(0, serverTimeSeconds);
+
     const { count: position } = await supabase
       .from('results')
       .select('*', { count: 'exact', head: true })
       .eq('category', session.category)
       .eq('question_count', total)
-      .or(`correct_answers.gt.${correct},and(correct_answers.eq.${correct},time_seconds.lt.${Math.round(timeSeconds)})`);
-
-    sessions.delete(sessionId);
+      .or(`correct_answers.gt.${safeCorrect},and(correct_answers.eq.${safeCorrect},time_seconds.lt.${safeTime})`);
 
     // Verifica conquistas
     const newAchievements = await checkAndGrantAchievements(currentUser.id, {
-      correct, total, timeSeconds: Math.round(timeSeconds), category: session.category,
+      correct, total, timeSeconds: serverTimeSeconds, category: session.category,
     });
 
     return res.json({
       correct,
       total,
-      timeSeconds: Math.round(timeSeconds),
+      timeSeconds: serverTimeSeconds,
       percentage: Math.round((correct / total) * 100),
       position: (position || 0) + 1,
       details,
@@ -368,7 +368,6 @@ router.post('/submit', async (req, res) => {
     });
   } catch (err) {
     console.error('[Quiz/submit]', err.message);
-    sessions.delete(sessionId); // Garante limpeza em caso de erro
     return res.status(500).json({ error: 'Erro ao salvar resultado.' });
   }
 });

@@ -21,12 +21,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // ─── CORS (ANTES de helmet) ──────────────────────────────────────────────────
-// Permite apenas seu frontend e localhost
+const isDev = process.env.NODE_ENV !== 'production';
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'https://enem-practice.vercel.app',
-  'http://localhost:5500',
-  'http://localhost:3000',
-  'http://127.0.0.1:5500',
+  ...(isDev ? ['http://localhost:5500', 'http://localhost:3000', 'http://127.0.0.1:5500'] : []),
 ];
 
 app.use(cors({
@@ -67,8 +65,17 @@ const authLimiter = rateLimit({
   message: { error: 'Muitas tentativas de login. Aguarde 15 minutos.' },
 });
 
+// Rate limit ainda mais restritivo para registro (anti-bot)
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hora
+  max: 5,
+  message: { error: 'Muitas tentativas de registro. Aguarde 1 hora.' },
+});
+
 // ─── Rotas ────────────────────────────────────────────────────────────────────
-app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', registerLimiter);
+app.use('/api/auth', authRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/ranking', rankingRoutes);
 

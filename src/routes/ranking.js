@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const supabase = require('../services/supabaseClient');
+const { supabase } = require('../services/supabaseClient');
+const { authMiddleware } = require('../middleware/authMiddleware');
 
 // ─── GET /api/ranking?category=matematica&count=10 ────────────────────────────
 router.get('/', async (req, res) => {
@@ -35,19 +36,12 @@ router.get('/', async (req, res) => {
 });
 
 // ─── GET /api/ranking/me?category=matematica&count=10 ─────────────────────────
-router.get('/me', async (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: 'Não autenticado.' });
-
-  const token = authHeader.split(' ')[1];
-  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-  if (authError || !user) return res.status(401).json({ error: 'Token inválido.' });
-
+router.get('/me', authMiddleware, async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('results')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', req.user.id)
       .order('completed_at', { ascending: false })
       .limit(20);
 
