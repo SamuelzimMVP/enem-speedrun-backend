@@ -68034,7 +68034,7 @@
         "numero": 50,
         "disciplina": "natureza",
         "contexto": "",
-        "enunciado": "A variação de entalpia do processo de trimerização, em kcal, para a formação de um mol de benzeno é mais próxima de",
+        "enunciado": "O benzeno, um importante solvente para a indústria química, é obtido industrialmente pela destilação do petróleo. Contudo, também pode ser sintetizado pela trimerização do acetileno catalisada por ferro metálico sob altas temperaturas, conforme a equação química:\n\n3 C₂H₂(g) → C₆H₆(l)\n\nA energia envolvida nesse processo pode ser calculada indiretamente pela variação de entalpia das reações de combustão das substâncias participantes, nas mesmas condições experimentais:\n\nI. C₂H₂(g) + 5/2 O₂(g) → 2 CO₂(g) + H₂O(l)  ΔH°c = −310 kcal/mol\nII. C₆H₆(l) + 15/2 O₂(g) → 6 CO₂(g) + 3 H₂O(l)  ΔH°c = −780 kcal/mol\n\nA variação de entalpia do processo de trimerização, em kcal, para a formação de um mol de benzeno é mais próxima de",
         "alternativas": [
           {
             "letra": "A",
@@ -68206,8 +68206,8 @@
         "ano": 2016,
         "numero": 54,
         "disciplina": "natureza",
-        "contexto": "Durante a primeira fase do projeto de uma usina de geração de energia elétrica, os engenheiros da equipe de avaliação de impactos ambientais procuram saber se esse projeto está de acordo com as normas ambientais. A nova planta estará localizada à beira de um rio, cuja temperatura média da água é de 25 °C, e usará a sua água somente para refrigeração. O projeto pretende que a usina opere com 1,0 MW de potência elétrica e, em razão de restrições técnicas, o dobro dessa potência será dissipada por seu sistema de arrefecimento, na forma de calor. Para atender a Resolução número 430, de 13 de maio de 2011, do Conselho Nacional do Meio Ambiente, com uma ampla margem de segurança, os engenheiros determinaram que a água só poderá ser devolvida ao rio com um aumento de temperatura de, no máximo, 3 °C em relação à temperatura da água do rio captada pelo sistema de arrefecimento.",
-        "enunciado": "Considere o calor específico da água igual a 4 kJ/(kg·°C).\n\nPara atender essa determinação, o valor mínimo do fluxo de água, em kg/s, para a refrigeração da usina deve ser mais próximo de",
+        "contexto": "",
+        "enunciado": "Durante a primeira fase do projeto de uma usina de geração de energia elétrica, os engenheiros da equipe de avaliação de impactos ambientais procuram saber se esse projeto está de acordo com as normas ambientais. A nova planta estará localizada à beira de um rio, cuja temperatura média da água é de 25 °C, e usará a sua água somente para refrigeração. O projeto pretende que a usina opere com 1,0 MW de potência elétrica e, em razão de restrições técnicas, o dobro dessa potência será dissipada por seu sistema de arrefecimento, na forma de calor. Para atender a resolução número 430, de 13 de maio de 2011, do Conselho Nacional do Meio Ambiente, com uma ampla margem de segurança, os engenheiros determinaram que a água só poderá ser devolvida ao rio com um aumento de temperatura de, no máximo, 3 °C em relação à temperatura da água do rio captada pelo sistema de arrefecimento. Considere o calor específico da água igual a 4 kJ/(kg °C).\n\nPara atender essa determinação, o valor minimo do fluxo de água, em kg/s, para a refrigeração da usina deve ser mais próximo de",
         "alternativas": [
           {
             "letra": "A",
@@ -68468,7 +68468,7 @@
         "numero": 60,
         "disciplina": "natureza",
         "contexto": "",
-        "enunciado": "No caso apresentado, entre o adsorvente e a substância adsorvida ocorre a formação de:",
+        "enunciado": "O carvão ativado é um material que possui elevado teor de carbono, sendo muito utilizado para a remoção de compostos orgânicos voláteis do meio, como o benzeno. Para a remoção desses compostos, utiliza-se a adsorção. Esse fenômeno ocorre por meio de interações do tipo intermoleculares entre a superfície do carvão (adsorvente) e o benzeno (adsorvato, substância adsorvida).\n\nNo caso apresentado, entre o adsorvente e a substância adsorvida ocorre a formação de:",
         "alternativas": [
           {
             "letra": "A",
@@ -69279,6 +69279,48 @@
         "gabarito": "D"
       },
       {
+        "id": "2016-79-natureza",
+        "ano": 2016,
+        "numero": 79,
+        "disciplina": "natureza",
+        "contexto": "",
+        "enunciado": "Vários métodos são empregados para prevenção de infecções por microrganismos. Dois desses métodos utilizam microrganismos vivos e são eles: as vacinas atenuadas, constituídas por patógenos avirulentos, e os probióticos que contêm bactérias benéficas. Na figura são apresentados cinco diferentes mecanismos de exclusão de patógenos pela ação dos probióticos no intestino de um animal.\n\n![](https://enem.dev/2016/questions/79/probiotic-mechanisms.png)\n\nQual mecanismo de ação desses probióticos promove um efeito similar ao da vacina?",
+        "alternativas": [
+          {
+            "letra": "A",
+            "texto": "5",
+            "imgUrl": null,
+            "isCorrect": false
+          },
+          {
+            "letra": "B",
+            "texto": "4",
+            "imgUrl": null,
+            "isCorrect": false
+          },
+          {
+            "letra": "C",
+            "texto": "3",
+            "imgUrl": null,
+            "isCorrect": true
+          },
+          {
+            "letra": "D",
+            "texto": "2",
+            "imgUrl": null,
+            "isCorrect": false
+          },
+          {
+            "letra": "E",
+            "texto": "1",
+            "imgUrl": null,
+            "isCorrect": false
+          }
+        ],
+        "imagens": [],
+        "gabarito": "C"
+      },
+      {
         "id": "2016-80-natureza",
         "ano": 2016,
         "numero": 80,
@@ -69456,7 +69498,7 @@
         "numero": 84,
         "disciplina": "natureza",
         "contexto": "",
-        "enunciado": "O aluno que responder corretamente ao questionamento do professor dirá que o derretimento ocorrerá",
+        "enunciado": "Num experimento, um professor deixa duas bandejas de mesma massa, uma de plástico e outra de alumínio, sobre a mesa do laboratório. Após algumas horas, ele pede aos alunos que avaliem a temperatura das duas bandejas, usando para isso o tato. Seus alunos afirmam, categoricamente, que a bandeja de alumínio encontra-se numa temperatura mais baixa. Intrigado, ele propõe uma segunda atividade, em que coloca um cubo de gelo sobre cada uma das bandejas, que estão em equilíbrio térmico com o ambiente, e os questiona em qual delas a taxa de derretimento do gelo será maior.\n\nO aluno que responder corretamente ao questionamento do professor dirá que o derretimento ocorrerá",
         "alternativas": [
           {
             "letra": "A",
@@ -69628,7 +69670,7 @@
         "numero": 88,
         "disciplina": "natureza",
         "contexto": "",
-        "enunciado": "Um estudante aqueceu um líquido em recipiente não completamente vedado e observou que a temperatura se manteve constante por um período mesmo com fornecimento contínuo de calor.\n\nA elevação de temperatura descrita ocorre porque",
+        "enunciado": "A hipertermia magnética é uma técnica utilizada no tratamento de tumores cancerosos. Nela, nanopartículas magnéticas são inseridas no tumor e submetidas a um campo magnético alternado de alta frequência. Como as nanopartículas estão em um fluido viscoso (o interior do tumor), a rotação imposta pelo campo magnético gera calor por atrito, elevando a temperatura local e destruindo as células cancerosas.\n\nA elevação de temperatura descrita ocorre porque",
         "alternativas": [
           {
             "letra": "A",
@@ -70056,8 +70098,8 @@
         "ano": 2015,
         "numero": 55,
         "disciplina": "natureza",
-        "contexto": "A hidroponia pode ser definida como uma técnica de produção de vegetais sem necessariamente a presença de solo. Uma das formas de implementação é manter as plantas com suas raízes suspensas em meio líquido, de onde retiram os nutrientes essenciais.",
-        "enunciado": "Suponha que um produtor de rúcula hidropônica precise ajustar a concentração do íon nitrato (NO3–) para 0,009 mol/L em um tanque de 5 000 litros e, para tanto, tem em mãos uma solução comercial nutritiva de nitrato de cálcio 90 g/L. As massas molares dos elementos N, O e Ca são iguais a 14 g/mol, 16 g/mol e 40 g/mol, respectivamente.\n\nQual o valor mais próximo do volume da solução nutritiva, em litros, que o produtor deve adicionar ao tanque?",
+        "contexto": "",
+        "enunciado": "Qual o valor mais próximo do volume da solução nutritiva, em litros, que o produtor deve adicionar ao tanque?",
         "alternativas": [
           {
             "letra": "A",
