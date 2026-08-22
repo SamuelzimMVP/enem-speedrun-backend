@@ -46,7 +46,7 @@ O ENEM Speedrun transforma o estudo cansativo em uma competição saudável. Ele
 
 ## ✅ Testes
 
-As regras anti-cheat do envio de respostas possuem testes automatizados:
+As regras anti-cheat e o fluxo HTTP de início e envio da prova possuem testes automatizados. A suíte também verifica que o gabarito não é exposto, que submissões inválidas não consomem a sessão e que uma sessão concluída não pode ser reutilizada:
 
 ```bash
 npm test

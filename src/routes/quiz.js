@@ -106,7 +106,7 @@ async function checkAndGrantAchievements(userId, context) {
 // ─── Sessões em memória (TTL 5 horas) ──────────────────────────────────────
 const sessions = new Map();
 
-setInterval(() => {
+const sessionCleanupTimer = setInterval(() => {
   const now = Date.now();
   for (const [id, session] of sessions.entries()) {
     if (now - session.startedAt > 5 * 60 * 60 * 1000) {
@@ -115,6 +115,7 @@ setInterval(() => {
     }
   }
 }, 5 * 60 * 1000);
+sessionCleanupTimer.unref();
 
 // ─── Categorias válidas ───────────────────────────────────────────────────────
 const VALID_CATEGORIES = [
