@@ -10,7 +10,7 @@ O ENEM Speedrun transforma o estudo cansativo em uma competição saudável. Ele
 ## 🛠️ Funcionalidades Core (API)
 
 - **🔐 Autenticação com Refresh Token**: Sistema robusto de login via Supabase Auth com renovação automática de sessão, garantindo que o aluno não perca o progresso.
-- **📝 Motor de Questões**: Consome a API `enem.dev` e organiza provas por categorias (Humanas, Exatas ou Completa) e contagem (10, 20 ou 30 questões).
+- **📝 Motor de Questões**: Consome a API `enem.dev` e organiza provas por categorias (Humanas, Exatas ou Completa) e contagem (10, 20 ou 30 questões). A prova completa distribui as questões de forma equilibrada entre as quatro áreas do ENEM.
 - **🏆 Sistema de Conquistas (Achievements)**: Lógica no servidor que valida recordes de tempo e precisão, conferindo badges permanentes no banco de dados.
 - **📊 Ranking em Tempo Real**: View SQL otimizada para listar os melhores desempenhos por categoria, usando critérios de acertos e desempate por milissegundos.
 
@@ -50,9 +50,10 @@ As regras anti-cheat e o fluxo HTTP de início e envio da prova possuem testes a
 
 ```bash
 npm test
+npm run audit:questions
 ```
 
-O mesmo comando é executado no GitHub Actions em Node.js 22 e 24.
+Os mesmos comandos são executados no GitHub Actions em Node.js 22 e 24. A auditoria do cache rejeita questões incompletas, áreas incompatíveis com a posição oficial, alternativas inválidas, gabaritos divergentes e IDs duplicados.
 
 ## 🤝 Autor
 Desenvolvido com foco em alta performance por [Samuel Zim](https://github.com/SamuelzimMVP).

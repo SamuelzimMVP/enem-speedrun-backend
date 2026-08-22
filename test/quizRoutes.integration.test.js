@@ -110,4 +110,19 @@ test('fluxo HTTP do quiz valida submissões e impede replay', async (t) => {
     assert.equal(result.response.status, 404);
     assert.equal(result.body.error, 'Sessão não encontrada ou expirada.');
   });
+
+  await t.test('monta prova completa equilibrada entre as quatro áreas', async () => {
+    const result = await postJson(baseUrl, '/api/quiz/start', {
+      category: 'completa',
+      count: 20,
+    });
+
+    assert.equal(result.response.status, 200);
+    for (const discipline of ['linguagens', 'humanas', 'natureza', 'matematica']) {
+      assert.equal(
+        result.body.questions.filter(question => question.disciplina === discipline).length,
+        5
+      );
+    }
+  });
 });

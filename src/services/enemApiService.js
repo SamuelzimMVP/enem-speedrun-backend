@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const { ENUNCIADOS_PROTEGIDOS, mapDiscipline, normalizeQuestion } = require('../utils/questionNormalizer');
+const { normalizeQuestion, resolveDiscipline } = require('../utils/questionNormalizer');
+const { getNextOffset } = require('../utils/enemApiPagination');
+const { selectBalancedQuestions } = require('../utils/questionSelector');
 
 const ENEM_API_BASE = 'https://api.enem.dev/v1';
 const QUESTIONS_FILE = path.join(__dirname, '..', '..', 'data', 'questions.json');
@@ -138,8 +140,14 @@ async function fetchQuestionsByYear(year, limit = 50, retries = 3) {
     if (!Array.isArray(questions) || questions.length === 0) break;
 
     allQuestions = allQuestions.concat(questions);
-    if (questions.length < limit) break; // última página
-    offset += limit;
+    const nextOffset = getNextOffset({
+      metadata: data.metadata,
+      returnedCount: questions.length,
+      currentOffset: offset,
+      limit,
+    });
+    if (nextOffset === null) break;
+    offset = nextOffset;
 
     await new Promise(r => setTimeout(r, 1500)); // evita rate limit
   }
@@ -175,10 +183,7 @@ async function populateCache() {
       }
 
       for (const q of questions) {
-        const rawDiscipline = q.discipline || q.subject;
-        if (!rawDiscipline) continue;
-
-        const disciplina = mapDiscipline(rawDiscipline);
+        const disciplina = resolveDiscipline(q);
         if (!disciplina) continue;
 
         const normalized = normalizeQuestion(q, disciplina);
@@ -255,6 +260,16 @@ async function getQuestions(category, count, filters = {}) {
 
   if (pool.length < count) {
     throw new Error(`Questões insuficientes no cache para ${category} (${pool.length} disponíveis, ${count} solicitadas)`);
+  }
+
+  if (category === 'completa') {
+    const poolsByDiscipline = Object.fromEntries(
+      disciplines.map(discipline => [
+        discipline,
+        pool.filter(question => question.disciplina === discipline),
+      ])
+    );
+    return selectBalancedQuestions(poolsByDiscipline, count);
   }
 
   // Embaralha com Fisher-Yates e retorna
