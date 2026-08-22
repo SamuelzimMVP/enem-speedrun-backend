@@ -10,13 +10,13 @@ O ENEM Speedrun transforma o estudo cansativo em uma competição saudável. Ele
 ## 🛠️ Funcionalidades Core (API)
 
 - **🔐 Autenticação com Refresh Token**: Sistema robusto de login via Supabase Auth com renovação automática de sessão, garantindo que o aluno não perca o progresso.
-- **📝 Motor de Questões**: Consome a API `enem.dev` e organiza provas por categorias (Humanas, Exatas ou Completa) e contagem (10, 20 ou 30 questões).
+- **📝 Motor de Questões**: Consome a API `enem.dev` e organiza provas por categorias (Humanas, Exatas ou Completa) e contagem (10, 20 ou 30 questões). A prova completa distribui as questões de forma equilibrada entre as quatro áreas do ENEM.
 - **🏆 Sistema de Conquistas (Achievements)**: Lógica no servidor que valida recordes de tempo e precisão, conferindo badges permanentes no banco de dados.
 - **📊 Ranking em Tempo Real**: View SQL otimizada para listar os melhores desempenhos por categoria, usando critérios de acertos e desempate por milissegundos.
 
 ## 📦 Tecnologias
 
-- **Runtime**: Node.js (v18+)
+- **Runtime**: Node.js (v22+)
 - **Framework**: Express.js
 - **Banco de Dados**: Supabase (PostgreSQL)
 - **Segurança**: Auth Middleware customizado e Rate Limiting.
@@ -35,13 +35,25 @@ O ENEM Speedrun transforma o estudo cansativo em uma competição saudável. Ele
    ```env
    PORT=3001
    SUPABASE_URL=seu_link
-   SUPABASE_SERVICE_KEY=sua_chave_secreta
+   SUPABASE_PUBLISHABLE_KEY=sb_publishable_sua_chave
+   SUPABASE_SECRET_KEY=sb_secret_sua_chave
    FRONTEND_URL=http://localhost:5500
    ```
 4. Rode em dev:
    ```bash
    npm run dev
    ```
+
+## ✅ Testes
+
+As regras anti-cheat e o fluxo HTTP de início e envio da prova possuem testes automatizados. A suíte também verifica que o gabarito não é exposto, que submissões inválidas não consomem a sessão e que uma sessão concluída não pode ser reutilizada:
+
+```bash
+npm test
+npm run audit:questions
+```
+
+Os mesmos comandos são executados no GitHub Actions em Node.js 22 e 24. A auditoria do cache rejeita questões incompletas, áreas incompatíveis com a posição oficial, alternativas inválidas, gabaritos divergentes e IDs duplicados.
 
 ## 🤝 Autor
 Desenvolvido com foco em alta performance por [Samuel Zim](https://github.com/SamuelzimMVP).

@@ -2,7 +2,8 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
-const { ENUNCIADOS_PROTEGIDOS, mapDiscipline, normalizeQuestion } = require('../src/utils/questionNormalizer');
+const { normalizeQuestion, resolveDiscipline } = require('../src/utils/questionNormalizer');
+const { getNextOffset } = require('../src/utils/enemApiPagination');
 
 const ENEM_API_BASE = 'https://api.enem.dev/v1';
 const OUTPUT_FILE = path.join(__dirname, '..', 'data', 'questions.json');
@@ -46,8 +47,14 @@ async function fetchQuestionsByYear(year, limit = 50) {
     if (!Array.isArray(questions) || questions.length === 0) break;
 
     allQuestions = allQuestions.concat(questions);
-    if (questions.length < limit) break;
-    offset += limit;
+    const nextOffset = getNextOffset({
+      metadata: data.metadata,
+      returnedCount: questions.length,
+      currentOffset: offset,
+      limit,
+    });
+    if (nextOffset === null) break;
+    offset = nextOffset;
 
     await new Promise(r => setTimeout(r, 1500));
   }
@@ -71,10 +78,7 @@ async function fetchAllQuestions() {
     const questions = await fetchQuestionsByYear(exam.year, 50);
 
     for (const q of questions) {
-      const rawDiscipline = q.discipline || q.subject;
-      if (!rawDiscipline) continue;
-
-      const disciplina = mapDiscipline(rawDiscipline);
+      const disciplina = resolveDiscipline(q);
       if (!disciplina) continue;
 
       const normalized = normalizeQuestion(q, disciplina);
@@ -84,7 +88,7 @@ async function fetchAllQuestions() {
       }
     }
 
-    console.log(`[Preload] ${exam.year}: ${questions.length} questões na API → ${seenIds.size} acumuladas no pool`);
+    console.log(`[Preload] ${exam.year}: ${questions.length} registros na API → ${seenIds.size} questões válidas acumuladas`);
   }
 
   return questionPool;

@@ -1,26 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4, validate: validateUuid } = require('uuid');
 const { authMiddleware, optionalAuth } = require('../middleware/authMiddleware');
 const { getQuestions } = require('../services/enemApiService');
-const { supabase } = require('../services/supabaseClient');
-
-// ─── Helper: extrair usuário do token (DRY) ─────────────────────────────────
-async function getUserFromToken(req) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
-  
-  const token = authHeader.split(' ')[1];
-  if (!token || token === 'null' || token === 'undefined') return null;
-  
-  try {
-    const { data: { user } } = await supabase.auth.getUser(token);
-    return user;
-  } catch (e) {
-    console.warn('[Auth] Token inválido:', e.message);
-    return null;
-  }
-}
+const { supabaseAdmin } = require('../services/supabaseClient');
+const { buildAnswerKey, validateSubmissionAnswers } = require('../utils/quizSubmissionValidator');
 
 // ─── Definições de conquistas ──────────────────────────────────────
 const ACHIEVEMENTS = [
@@ -71,7 +55,7 @@ const ACHIEVEMENTS = [
 // ─── Busca conquistas do usuário ──────────────────────────────────────────
 router.get('/achievements/me', authMiddleware, async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('user_achievements')
       .select('achievement_id, earned_at')
       .eq('user_id', req.user.id);
@@ -93,7 +77,7 @@ router.get('/achievements/me', authMiddleware, async (req, res) => {
 // ─── Verifica e concede conquistas ──────────────────────────────────────
 async function checkAndGrantAchievements(userId, context) {
   // Busca conquistas que o usuário já tem
-  const { data: existing } = await supabase
+  const { data: existing } = await supabaseAdmin
     .from('user_achievements')
     .select('achievement_id')
     .eq('user_id', userId);
@@ -106,7 +90,7 @@ async function checkAndGrantAchievements(userId, context) {
     if (!ach.check(context)) continue;    // não cumpriu a condição
 
     // Tenta inserir (falha silenciosamente se já existir por UNIQUE)
-    const { error } = await supabase.from('user_achievements').insert({
+    const { error } = await supabaseAdmin.from('user_achievements').insert({
       user_id: userId,
       achievement_id: ach.id,
     });
@@ -122,7 +106,7 @@ async function checkAndGrantAchievements(userId, context) {
 // ─── Sessões em memória (TTL 5 horas) ──────────────────────────────────────
 const sessions = new Map();
 
-setInterval(() => {
+const sessionCleanupTimer = setInterval(() => {
   const now = Date.now();
   for (const [id, session] of sessions.entries()) {
     if (now - session.startedAt > 5 * 60 * 60 * 1000) {
@@ -131,6 +115,7 @@ setInterval(() => {
     }
   }
 }, 5 * 60 * 1000);
+sessionCleanupTimer.unref();
 
 // ─── Categorias válidas ───────────────────────────────────────────────────────
 const VALID_CATEGORIES = [
@@ -151,9 +136,8 @@ const CATEGORY_LABELS = {
 const AVAILABLE_YEARS = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
 
 // ─── POST /api/quiz/start ─────────────────────────────────────────────────────
-router.post('/start', async (req, res) => {
-  // Usa helper DRY ao invés de lógica duplicada
-  const currentUser = await getUserFromToken(req);
+router.post('/start', optionalAuth, async (req, res) => {
+  const currentUser = req.user;
   const isGuest = !currentUser;
 
   const { category, count, year } = req.body;
@@ -179,6 +163,7 @@ router.post('/start', async (req, res) => {
 
   try {
     const questions = await getQuestions(category, questionCount, filters);
+    const answerKey = buildAnswerKey(questions, questionCount);
 
     const sessionId = uuidv4();
 
@@ -188,7 +173,7 @@ router.post('/start', async (req, res) => {
       category,
       count: questionCount,
       startedAt: Date.now(),
-      gabarito: Object.fromEntries(questions.map(q => [q.id, q.gabarito])),
+      gabarito: answerKey,
       processing: false, // Flag para prevenir race condition
     });
 
@@ -258,14 +243,17 @@ router.get('/start-test', async (req, res) => {
 });
 
 // ─── POST /api/quiz/submit ────────────────────────────────────────────────────
-router.post('/submit', async (req, res) => {
-  // Usa helper DRY ao invés de lógica duplicada
-  const currentUser = await getUserFromToken(req);
+router.post('/submit', optionalAuth, async (req, res) => {
+  const currentUser = req.user;
 
-  const { sessionId, answers, timeSeconds } = req.body;
+  const { sessionId, answers } = req.body;
 
-  if (!sessionId || !answers || timeSeconds === undefined) {
+  if (!sessionId || answers === undefined) {
     return res.status(400).json({ error: 'Dados incompletos.' });
+  }
+
+  if (typeof sessionId !== 'string' || !validateUuid(sessionId)) {
+    return res.status(400).json({ error: 'sessionId inválido.' });
   }
 
   const session = sessions.get(sessionId);
@@ -274,9 +262,6 @@ router.post('/submit', async (req, res) => {
     return res.status(404).json({ error: 'Sessão não encontrada ou expirada.' });
   }
 
-  // Previne race condition: deleta sessão atomicamente antes de processar
-  sessions.delete(sessionId);
-
   // Se a sessão era de usuário logado, valida o usuário atual
   if (session.userId !== 'GUEST' && (!currentUser || session.userId !== currentUser.id)) {
     return res.status(403).json({ error: 'Sessão não pertence a este usuário.' });
@@ -284,29 +269,42 @@ router.post('/submit', async (req, res) => {
 
   const isGuest = session.userId === 'GUEST';
 
-  // Validação das respostas
-  if (!Array.isArray(answers) || answers.length === 0) {
-    return res.status(400).json({ error: 'Nenhuma resposta enviada.' });
+  // ─── Validação anti-cheat das respostas ──────────────────────────────────
+  const validation = validateSubmissionAnswers(answers, session.gabarito, session.count);
+  if (validation.error) {
+    if (validation.internal) {
+      console.error(`[Quiz/submit] ${validation.error} sessionId=${sessionId}`);
+      return res.status(500).json({ error: 'Sessão inválida. Inicie uma nova prova.' });
+    }
+    return res.status(400).json({ error: validation.error });
   }
+
+  // Anti-replay/race condition. A partir daqui a sessão só pode ser submetida uma vez.
+  sessions.delete(sessionId);
 
   let correct = 0;
   const details = [];
 
-  for (const { questionId, selected } of answers) {
+  for (const { questionId, selected } of validation.normalizedAnswers) {
     const gabarito = session.gabarito[questionId];
-    if (!gabarito) {
-      console.warn(`[Quiz/submit] Questão não encontrada no gabarito: ${questionId}`);
-      continue;
-    }
-    
-    const isCorrect = selected?.toUpperCase() === gabarito.toUpperCase();
+    const isCorrect = selected === gabarito;
     if (isCorrect) correct++;
     details.push({ questionId, selected, gabarito, correct: isCorrect });
   }
 
   const total = session.count;
+
+  // Defesa em profundidade: nunca persiste pontuação impossível.
+  if (correct < 0 || correct > total) {
+    console.error(`[Quiz/submit] Pontuação impossível detectada: ${correct}/${total}`);
+    return res.status(400).json({ error: 'Resultado inválido.' });
+  }
+
   // Calcula tempo no servidor (anti-cheat)
-  const serverTimeSeconds = Math.round((Date.now() - session.startedAt) / 1000);
+  const serverTimeSeconds = Math.max(
+    0,
+    Math.round((Date.now() - session.startedAt) / 1000)
+  );
 
   try {
     if (isGuest) {
@@ -322,13 +320,13 @@ router.post('/submit', async (req, res) => {
     }
 
     // Garante que o perfil existe antes de salvar o resultado
-    await supabase.from('profiles').upsert({
+    await supabaseAdmin.from('profiles').upsert({
       id: currentUser.id,
       nome: currentUser.user_metadata?.nome || 'Usuário',
       email: currentUser.email,
     });
 
-    const { data: result, error } = await supabase.from('results').insert({
+    const { data: result, error } = await supabaseAdmin.from('results').insert({
       user_id: currentUser.id,
       category: session.category,
       question_count: total,
@@ -345,7 +343,7 @@ router.post('/submit', async (req, res) => {
     const safeCorrect = Number(correct) || 0;
     const safeTime = Math.max(0, serverTimeSeconds);
 
-    const { count: position } = await supabase
+    const { count: position } = await supabaseAdmin
       .from('results')
       .select('*', { count: 'exact', head: true })
       .eq('category', session.category)
