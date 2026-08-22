@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { supabase, supabaseAdmin } = require('../services/supabaseClient');
+const { authMiddleware } = require('../middleware/authMiddleware');
 
 // ─── Validação de email ───────────────────────────────────────────────────────
 function isValidEmail(email) {
@@ -40,7 +41,7 @@ router.post('/register', async (req, res) => {
     }
 
     // Salva nome na tabela de perfis
-    const { error: profileError } = await supabase.from('profiles').upsert({
+    const { error: profileError } = await supabaseAdmin.from('profiles').upsert({
       id: data.user.id,
       nome,
       email,
@@ -75,14 +76,14 @@ router.post('/login', async (req, res) => {
     }
 
     // Garante que o perfil existe (Just-In-Time creation)
-    await supabase.from('profiles').upsert({
+    await supabaseAdmin.from('profiles').upsert({
       id: data.user.id,
       nome: data.user.user_metadata?.nome || 'Usuário',
       email: data.user.email,
     });
 
     // Busca nome do perfil atualizado
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('nome')
       .eq('id', data.user.id)
@@ -104,26 +105,18 @@ router.post('/login', async (req, res) => {
 });
 
 // ─── Dados do usuário logado ──────────────────────────────────────────────────
-router.get('/me', async (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: 'Não autenticado.' });
-
-  const token = authHeader.split(' ')[1];
-
+router.get('/me', authMiddleware, async (req, res) => {
   try {
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) return res.status(401).json({ error: 'Token inválido.' });
-
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('nome')
-      .eq('id', user.id)
+      .eq('id', req.user.id)
       .single();
 
     return res.json({
-      id: user.id,
-      email: user.email,
-      nome: profile?.nome || user.user_metadata?.nome || 'Usuário',
+      id: req.user.id,
+      email: req.user.email,
+      nome: profile?.nome || req.user.user_metadata?.nome || 'Usuário',
     });
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno.' });

@@ -2,13 +2,15 @@ const { supabase } = require('../services/supabaseClient');
 
 async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
-  console.log(`[StrictAuth] URL: ${req.url} | Header: ${authHeader ? 'Presente' : 'Ausente'}`);
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: '[STRICT] Token de autenticação ausente.' });
+    return res.status(401).json({ error: 'Token de autenticação ausente.' });
   }
 
   const token = authHeader.split(' ')[1];
+  if (!token || token === 'null' || token === 'undefined') {
+    return res.status(401).json({ error: 'Token de autenticação ausente.' });
+  }
 
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);

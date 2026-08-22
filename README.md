@@ -16,7 +16,7 @@ O ENEM Speedrun transforma o estudo cansativo em uma competição saudável. Ele
 
 ## 📦 Tecnologias
 
-- **Runtime**: Node.js (v18+)
+- **Runtime**: Node.js (v22+)
 - **Framework**: Express.js
 - **Banco de Dados**: Supabase (PostgreSQL)
 - **Segurança**: Auth Middleware customizado e Rate Limiting.
@@ -35,13 +35,24 @@ O ENEM Speedrun transforma o estudo cansativo em uma competição saudável. Ele
    ```env
    PORT=3001
    SUPABASE_URL=seu_link
-   SUPABASE_SERVICE_KEY=sua_chave_secreta
+   SUPABASE_PUBLISHABLE_KEY=sb_publishable_sua_chave
+   SUPABASE_SECRET_KEY=sb_secret_sua_chave
    FRONTEND_URL=http://localhost:5500
    ```
 4. Rode em dev:
    ```bash
    npm run dev
    ```
+
+## ✅ Testes
+
+As regras anti-cheat do envio de respostas possuem testes automatizados:
+
+```bash
+npm test
+```
+
+O mesmo comando é executado no GitHub Actions em Node.js 22 e 24.
 
 ## 🤝 Autor
 Desenvolvido com foco em alta performance por [Samuel Zim](https://github.com/SamuelzimMVP).

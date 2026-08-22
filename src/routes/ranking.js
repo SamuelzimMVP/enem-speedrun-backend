@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { supabase } = require('../services/supabaseClient');
+const { supabase, supabaseAdmin } = require('../services/supabaseClient');
 const { authMiddleware } = require('../middleware/authMiddleware');
 
 // ─── GET /api/ranking?category=matematica&count=10 ────────────────────────────
@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
 // ─── GET /api/ranking/me?category=matematica&count=10 ─────────────────────────
 router.get('/me', authMiddleware, async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('results')
       .select('*')
       .eq('user_id', req.user.id)

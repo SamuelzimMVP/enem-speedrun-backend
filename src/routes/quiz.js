@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4, validate: validateUuid } = require('uuid');
 const { authMiddleware, optionalAuth } = require('../middleware/authMiddleware');
 const { getQuestions } = require('../services/enemApiService');
-const { supabase } = require('../services/supabaseClient');
+const { supabaseAdmin } = require('../services/supabaseClient');
+const { buildAnswerKey, validateSubmissionAnswers } = require('../utils/quizSubmissionValidator');
 
 // ─── Definições de conquistas ──────────────────────────────────────
 const ACHIEVEMENTS = [
@@ -54,7 +55,7 @@ const ACHIEVEMENTS = [
 // ─── Busca conquistas do usuário ──────────────────────────────────────────
 router.get('/achievements/me', authMiddleware, async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('user_achievements')
       .select('achievement_id, earned_at')
       .eq('user_id', req.user.id);
@@ -76,7 +77,7 @@ router.get('/achievements/me', authMiddleware, async (req, res) => {
 // ─── Verifica e concede conquistas ──────────────────────────────────────
 async function checkAndGrantAchievements(userId, context) {
   // Busca conquistas que o usuário já tem
-  const { data: existing } = await supabase
+  const { data: existing } = await supabaseAdmin
     .from('user_achievements')
     .select('achievement_id')
     .eq('user_id', userId);
@@ -89,7 +90,7 @@ async function checkAndGrantAchievements(userId, context) {
     if (!ach.check(context)) continue;    // não cumpriu a condição
 
     // Tenta inserir (falha silenciosamente se já existir por UNIQUE)
-    const { error } = await supabase.from('user_achievements').insert({
+    const { error } = await supabaseAdmin.from('user_achievements').insert({
       user_id: userId,
       achievement_id: ach.id,
     });
@@ -161,6 +162,7 @@ router.post('/start', optionalAuth, async (req, res) => {
 
   try {
     const questions = await getQuestions(category, questionCount, filters);
+    const answerKey = buildAnswerKey(questions, questionCount);
 
     const sessionId = uuidv4();
 
@@ -170,7 +172,7 @@ router.post('/start', optionalAuth, async (req, res) => {
       category,
       count: questionCount,
       startedAt: Date.now(),
-      gabarito: Object.fromEntries(questions.map(q => [q.id, q.gabarito])),
+      gabarito: answerKey,
       processing: false, // Flag para prevenir race condition
     });
 
@@ -243,13 +245,13 @@ router.get('/start-test', async (req, res) => {
 router.post('/submit', optionalAuth, async (req, res) => {
   const currentUser = req.user;
 
-  const { sessionId, answers, timeSeconds } = req.body;
+  const { sessionId, answers } = req.body;
 
-  if (!sessionId || !answers || timeSeconds === undefined) {
+  if (!sessionId || answers === undefined) {
     return res.status(400).json({ error: 'Dados incompletos.' });
   }
 
-  if (typeof sessionId !== 'string' || sessionId.length > 100) {
+  if (typeof sessionId !== 'string' || !validateUuid(sessionId)) {
     return res.status(400).json({ error: 'sessionId inválido.' });
   }
 
@@ -267,46 +269,13 @@ router.post('/submit', optionalAuth, async (req, res) => {
   const isGuest = session.userId === 'GUEST';
 
   // ─── Validação anti-cheat das respostas ──────────────────────────────────
-  if (!Array.isArray(answers)) {
-    return res.status(400).json({ error: 'answers deve ser uma lista.' });
-  }
-
-  if (answers.length !== session.count) {
-    return res.status(400).json({
-      error: `Quantidade de respostas inválida. Esperadas: ${session.count}.`,
-    });
-  }
-
-  const expectedQuestionIds = new Set(Object.keys(session.gabarito));
-  const receivedQuestionIds = new Set();
-
-  for (const answer of answers) {
-    if (!answer || typeof answer !== 'object') {
-      return res.status(400).json({ error: 'Formato de resposta inválido.' });
+  const validation = validateSubmissionAnswers(answers, session.gabarito, session.count);
+  if (validation.error) {
+    if (validation.internal) {
+      console.error(`[Quiz/submit] ${validation.error} sessionId=${sessionId}`);
+      return res.status(500).json({ error: 'Sessão inválida. Inicie uma nova prova.' });
     }
-
-    const { questionId, selected } = answer;
-
-    if (typeof questionId !== 'string' || !expectedQuestionIds.has(questionId)) {
-      return res.status(400).json({ error: 'Uma ou mais questões não pertencem a esta sessão.' });
-    }
-
-    if (receivedQuestionIds.has(questionId)) {
-      return res.status(400).json({ error: 'Questão duplicada detectada.' });
-    }
-    receivedQuestionIds.add(questionId);
-
-    // O frontend mantém respostas não marcadas como null.
-    if (selected !== null && selected !== undefined) {
-      if (typeof selected !== 'string' || !['A', 'B', 'C', 'D', 'E'].includes(selected.toUpperCase())) {
-        return res.status(400).json({ error: 'Alternativa inválida.' });
-      }
-    }
-  }
-
-  // Garante exatamente o mesmo conjunto de questões emitido em /start.
-  if (receivedQuestionIds.size !== expectedQuestionIds.size) {
-    return res.status(400).json({ error: 'Conjunto de questões incompleto.' });
+    return res.status(400).json({ error: validation.error });
   }
 
   // Anti-replay/race condition. A partir daqui a sessão só pode ser submetida uma vez.
@@ -315,12 +284,11 @@ router.post('/submit', optionalAuth, async (req, res) => {
   let correct = 0;
   const details = [];
 
-  for (const { questionId, selected } of answers) {
+  for (const { questionId, selected } of validation.normalizedAnswers) {
     const gabarito = session.gabarito[questionId];
-    const normalizedSelected = typeof selected === 'string' ? selected.toUpperCase() : null;
-    const isCorrect = normalizedSelected === gabarito.toUpperCase();
+    const isCorrect = selected === gabarito;
     if (isCorrect) correct++;
-    details.push({ questionId, selected: normalizedSelected, gabarito, correct: isCorrect });
+    details.push({ questionId, selected, gabarito, correct: isCorrect });
   }
 
   const total = session.count;
@@ -351,13 +319,13 @@ router.post('/submit', optionalAuth, async (req, res) => {
     }
 
     // Garante que o perfil existe antes de salvar o resultado
-    await supabase.from('profiles').upsert({
+    await supabaseAdmin.from('profiles').upsert({
       id: currentUser.id,
       nome: currentUser.user_metadata?.nome || 'Usuário',
       email: currentUser.email,
     });
 
-    const { data: result, error } = await supabase.from('results').insert({
+    const { data: result, error } = await supabaseAdmin.from('results').insert({
       user_id: currentUser.id,
       category: session.category,
       question_count: total,
@@ -374,7 +342,7 @@ router.post('/submit', optionalAuth, async (req, res) => {
     const safeCorrect = Number(correct) || 0;
     const safeTime = Math.max(0, serverTimeSeconds);
 
-    const { count: position } = await supabase
+    const { count: position } = await supabaseAdmin
       .from('results')
       .select('*', { count: 'exact', head: true })
       .eq('category', session.category)
