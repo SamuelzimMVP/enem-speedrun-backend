@@ -5,23 +5,6 @@ const { authMiddleware, optionalAuth } = require('../middleware/authMiddleware')
 const { getQuestions } = require('../services/enemApiService');
 const { supabase } = require('../services/supabaseClient');
 
-// ─── Helper: extrair usuário do token (DRY) ─────────────────────────────────
-async function getUserFromToken(req) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
-  
-  const token = authHeader.split(' ')[1];
-  if (!token || token === 'null' || token === 'undefined') return null;
-  
-  try {
-    const { data: { user } } = await supabase.auth.getUser(token);
-    return user;
-  } catch (e) {
-    console.warn('[Auth] Token inválido:', e.message);
-    return null;
-  }
-}
-
 // ─── Definições de conquistas ──────────────────────────────────────
 const ACHIEVEMENTS = [
   {
@@ -151,9 +134,8 @@ const CATEGORY_LABELS = {
 const AVAILABLE_YEARS = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
 
 // ─── POST /api/quiz/start ─────────────────────────────────────────────────────
-router.post('/start', async (req, res) => {
-  // Usa helper DRY ao invés de lógica duplicada
-  const currentUser = await getUserFromToken(req);
+router.post('/start', optionalAuth, async (req, res) => {
+  const currentUser = req.user;
   const isGuest = !currentUser;
 
   const { category, count, year } = req.body;
@@ -258,14 +240,17 @@ router.get('/start-test', async (req, res) => {
 });
 
 // ─── POST /api/quiz/submit ────────────────────────────────────────────────────
-router.post('/submit', async (req, res) => {
-  // Usa helper DRY ao invés de lógica duplicada
-  const currentUser = await getUserFromToken(req);
+router.post('/submit', optionalAuth, async (req, res) => {
+  const currentUser = req.user;
 
   const { sessionId, answers, timeSeconds } = req.body;
 
   if (!sessionId || !answers || timeSeconds === undefined) {
     return res.status(400).json({ error: 'Dados incompletos.' });
+  }
+
+  if (typeof sessionId !== 'string' || sessionId.length > 100) {
+    return res.status(400).json({ error: 'sessionId inválido.' });
   }
 
   const session = sessions.get(sessionId);
@@ -274,9 +259,6 @@ router.post('/submit', async (req, res) => {
     return res.status(404).json({ error: 'Sessão não encontrada ou expirada.' });
   }
 
-  // Previne race condition: deleta sessão atomicamente antes de processar
-  sessions.delete(sessionId);
-
   // Se a sessão era de usuário logado, valida o usuário atual
   if (session.userId !== 'GUEST' && (!currentUser || session.userId !== currentUser.id)) {
     return res.status(403).json({ error: 'Sessão não pertence a este usuário.' });
@@ -284,29 +266,76 @@ router.post('/submit', async (req, res) => {
 
   const isGuest = session.userId === 'GUEST';
 
-  // Validação das respostas
-  if (!Array.isArray(answers) || answers.length === 0) {
-    return res.status(400).json({ error: 'Nenhuma resposta enviada.' });
+  // ─── Validação anti-cheat das respostas ──────────────────────────────────
+  if (!Array.isArray(answers)) {
+    return res.status(400).json({ error: 'answers deve ser uma lista.' });
   }
+
+  if (answers.length !== session.count) {
+    return res.status(400).json({
+      error: `Quantidade de respostas inválida. Esperadas: ${session.count}.`,
+    });
+  }
+
+  const expectedQuestionIds = new Set(Object.keys(session.gabarito));
+  const receivedQuestionIds = new Set();
+
+  for (const answer of answers) {
+    if (!answer || typeof answer !== 'object') {
+      return res.status(400).json({ error: 'Formato de resposta inválido.' });
+    }
+
+    const { questionId, selected } = answer;
+
+    if (typeof questionId !== 'string' || !expectedQuestionIds.has(questionId)) {
+      return res.status(400).json({ error: 'Uma ou mais questões não pertencem a esta sessão.' });
+    }
+
+    if (receivedQuestionIds.has(questionId)) {
+      return res.status(400).json({ error: 'Questão duplicada detectada.' });
+    }
+    receivedQuestionIds.add(questionId);
+
+    // O frontend mantém respostas não marcadas como null.
+    if (selected !== null && selected !== undefined) {
+      if (typeof selected !== 'string' || !['A', 'B', 'C', 'D', 'E'].includes(selected.toUpperCase())) {
+        return res.status(400).json({ error: 'Alternativa inválida.' });
+      }
+    }
+  }
+
+  // Garante exatamente o mesmo conjunto de questões emitido em /start.
+  if (receivedQuestionIds.size !== expectedQuestionIds.size) {
+    return res.status(400).json({ error: 'Conjunto de questões incompleto.' });
+  }
+
+  // Anti-replay/race condition. A partir daqui a sessão só pode ser submetida uma vez.
+  sessions.delete(sessionId);
 
   let correct = 0;
   const details = [];
 
   for (const { questionId, selected } of answers) {
     const gabarito = session.gabarito[questionId];
-    if (!gabarito) {
-      console.warn(`[Quiz/submit] Questão não encontrada no gabarito: ${questionId}`);
-      continue;
-    }
-    
-    const isCorrect = selected?.toUpperCase() === gabarito.toUpperCase();
+    const normalizedSelected = typeof selected === 'string' ? selected.toUpperCase() : null;
+    const isCorrect = normalizedSelected === gabarito.toUpperCase();
     if (isCorrect) correct++;
-    details.push({ questionId, selected, gabarito, correct: isCorrect });
+    details.push({ questionId, selected: normalizedSelected, gabarito, correct: isCorrect });
   }
 
   const total = session.count;
+
+  // Defesa em profundidade: nunca persiste pontuação impossível.
+  if (correct < 0 || correct > total) {
+    console.error(`[Quiz/submit] Pontuação impossível detectada: ${correct}/${total}`);
+    return res.status(400).json({ error: 'Resultado inválido.' });
+  }
+
   // Calcula tempo no servidor (anti-cheat)
-  const serverTimeSeconds = Math.round((Date.now() - session.startedAt) / 1000);
+  const serverTimeSeconds = Math.max(
+    0,
+    Math.round((Date.now() - session.startedAt) / 1000)
+  );
 
   try {
     if (isGuest) {
